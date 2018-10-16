@@ -10,3 +10,181 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+
+####################################
+# Explicit to this project
+####################################
+#
+# Add explicit project settings
+# up here. Makes it easier to
+# find && thus don't accidently
+# re-create and lose defined
+# data.
+tmp
+
+####################################
+# passwordmanagerservice
+####################################
+build/*
+*.rpm
+docs/Spaces/apiBlueprints/spaces/*.html 
+*.out
+./server
+./passwordmanagerservice
+
+
+####################################
+# IntelliJ
+####################################
+.idea
+*.iml
+
+####################################
+# Eclipse
+####################################
+.classpath
+.project
+.settings
+.metadata
+.plugins
+
+####################################
+# Visual Studio Code
+####################################
+.vscode
+
+####################################
+# Go-lang
+####################################
+vendor
+
+####################################
+# Maven
+####################################
+logs
+target
+tree.txt   # Usually perform: mvn dependency:tree > tree.txt
+
+####################################
+# Mac OS X
+####################################
+.DS_Store
+._*    # Meta data that OS-X will fork and you end up with 1 to 1 metadata file with actual file.
+
+####################################
+# packaging
+####################################
+*.tar.gz
+*.tgz
+*.zip
+*.tar
+*.rpm
+*.bz2
+*.xz
+*.z
+*.Z
+*.7z
+*.arc
+*.dmg
+*.arj
+*.cpio
+*.shar
+*.a
+*.ar
+*.gz
+*.rz
+*.lz
+*.lzma
+*.lzo
+*.rar
+
+####################################
+# Magic tag to not track 
+####################################
+*-dont-track*
+*_dont-track*
+
+####################################
+# Generated formats
+####################################
+*.pdf
+
+####################################
+# Libraries
+#####################################
+*.jar
+*.war
+*.ear
+*.so
+*.a
+*.o
+*.dylib
+*.jnilib
+
+#####################################
+# Binaries
+#####################################
+*.class
+*.exe
+*.beam
+*.bin
+*.bsx
+
+####################################
+# Cache files
+####################################
+*.swp    # vi
+*.txt~   # gedit
+# Other files
+####################################
+*.swp
+
+####################################
+# Build number plugin. 
+####################################
+buildNumber.properties
+
+####################################
+# Certificates
+####################################
+id_rdsa*
+# *.pem
+*.jks
+*.ca
+
+####################################
+# BuildSystems
+####################################
+.gradle
+
+####################################
+# NIM
+####################################
+nimcache
+# Will need a way to ignore the actual binaries generated.
+# Might want to add '.bin' extension.
+
+####################################
+# Document Binaries
+####################################
+*.odt
+*.ppt
+
+####################################
+# GIT Stuff
+####################################
+branches.txt
+git_cleanup.sh  # Uses 'branches.txt' to cleanup.
+log.txt         # Usually to capture N number of git commits for a rebase or squash.
+
+####################################
+# GIT Cleanup
+####################################
+branches.txt
+git_cleanup.sh
+
+####################################
+# Python3 
+####################################
+venv
