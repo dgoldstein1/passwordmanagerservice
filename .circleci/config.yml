@@ -1,0 +1,52 @@
+
+defaults: &defaults
+  environment:
+    CC_TEST_REPORTER_ID: d78043952f109d50b0587f32df438111bfb1db352e5ddd2f460e91c3f47ff54c 
+  docker:
+    - image: circleci/golang:1.9
+  working_directory: /go/src/github.com/dgoldstein1/passwordservice
+
+version: 2
+jobs:
+  build-test:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run: dep ensure -v
+      - save_cache:
+          paths:
+            - vendor
+          key: m2-{{ checksum "Gopkg.toml" }}
+      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - run: chmod +x ./cc-test-reporter
+      - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
+      - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
+      - run: ./cc-test-reporter upload-coverage
+
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - run: ./build_server.sh
+
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-test
+      - deploy:
+          requires:
+            - build-test
+          filters:
+            branches:
+              only: master
