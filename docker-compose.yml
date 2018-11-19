@@ -17,3 +17,11 @@ services:
       - ./docs/api:/opt/services/passwordservice/docs
       - ./protobuf:/go/src/github.com/dgoldstein1/passwordservice/protobuf
       - ./settings.toml:/etc/passwordservice/settings.toml
+
+  mongodb:
+    image: mongo:3.2.1
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null

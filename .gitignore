@@ -142,6 +142,10 @@ id_rdsa*
 *.jks
 *.ca
 ./docker/passwordservice/certs/*
+*.crt
+*.p12
+*.key
+*.pem
 
 ####################################
 # BuildSystems
