@@ -1,17 +1,3 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-
 ####################################
 # Explicit to this project
 ####################################
@@ -21,18 +7,21 @@
 # find && thus don't accidently
 # re-create and lose defined
 # data.
+docker/mongodb
+docker/passwordservice
+docker/aac/parameters.config
 tmp
 
 ####################################
-# passwordmanagerservice
+# passwordservice
 ####################################
 build/*
-*.rpm
-docs/Spaces/apiBlueprints/spaces/*.html 
+docs/api/*.html
+*.rpm 
 *.out
 ./server
-./passwordmanagerservice
-
+./passwordservice
+coverage
 
 ####################################
 # IntelliJ
@@ -152,6 +141,7 @@ id_rdsa*
 # *.pem
 *.jks
 *.ca
+./docker/passwordservice/certs/*
 
 ####################################
 # BuildSystems

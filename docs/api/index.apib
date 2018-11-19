@@ -1,0 +1,30 @@
+FORMAT: 1A
+
+# Group Navigation
+
+## Table of Contents
+
++ [Service Overview](index.html)
++ [RESTful API documention](rest.html)
++ [Change Log](changelog.html)
++ [Data Model](datamodel.html)
+
+# Group Service Overview
+
+The Password service safely manages interaction between clients and encrypted mongodb collections to manager passwords.
+
+## Service Dependencies
+
++ [Mongodb](https://www.mongodb.com/)
++ [Password Manager UI](https://github.com/dgoldstein1/password-manager-ui)
++ [ip Stack](https://ipstack.com/)
+
+Below is a graphical representation of the the dependencies listed above:
+
+<img src="architecture.png" alt="Architecture" width="500" text-align="center" align="middle" />
+
+## Authentication
+
+Client authentication is a key part of this service, and careful thought has been given to prevent replay, man in the middle, or DOS attacks. For more information, see the below authentication workflow:
+
+<img src="password-retrieval-workflow.png" alt="Password Workflow" width="500" text-align="center" align="middle" />

@@ -1,0 +1,99 @@
+FORMAT: 1A
+
+# Group Navigation
+
+## Table of Contents
+
++ [Service Overview](index.html)
++ [RESTful API documention](rest.html)
++ [Change Log](changelog.html)
++ [Data Model](datamodel.html)
+
+# Group Data Model
+
+The Password service keeps track of three kinds of information
+- User information for validation and authentication
+- List of geo and IP-located logins
+- Password information
+
+
+### Schema
+
+*User Information*
+
+| Attribute | Meaning           | Type |
+|:-------|----------------------|---------|
+| `fist`  | first name             |   string      |
+| `last`  | last name          |   string      |
+| `email`  | email addrss        |    string     |
+
+*Authentication*
+
+| Attribute | Meaning           | Type |
+|:-------|----------------------|---------|
+| `dn`  | User ID           |   string      |
+| `authPassword`  | Shared client <-> server secret             |     string    |
+| `accessToken`  | Challenge / Response answer (temporary)          |     string    |
+| `authQuestions`  | Plain text questions and answer from user to authenticate  if not in list of known IPs       |    list[string]     |
+| `locked`  | is this account locked?        |    bool     |
+| `failedLogins`  | Number of times the user has failed to log in, reset on every successful login        |    number     |
+| `knownIPs`  | pre-aggregated list of IPs user has logged in from        |    list[string]     |
+
+
+*Logins*
+
+List of geolocated logins. See [ip stack API](https://ipstack.com/documentation) for more information.
+
+*Passwords*
+
+| Attribute | Meaning           | Type |
+|:-------|----------------------|---------|
+| `passwords`  | encrypted and encoded stringified JSON of user's passwords           |   string      |
+
+### Plaintext Example
+
+
+```json
+{
+  "user": {
+    "first": "David",
+    "last": "Goldstein",
+    "email": "david@david.com"
+  },
+  "auth": {
+    "dn": "cn=david dgoldstein,ou=people,ou=passworkd org,c=us",
+    "authPassword": "poiw83vliuaywelfiauwheflkajsdhdrvl938lwu3iohf",
+    "accessToken": "ls39vnlw9nv83vlr2vl3h2l3rjvsljvhrn-239n-r19na-n2n1v8",
+    "locked" : false,
+    "failedLogins" : 0,
+    "authQuestions": [
+      {
+        "q": "what is your pet's name?",
+        "a": "penny"
+      }
+    ],
+    "knownIPs": [
+      "172.42.64.6"
+    ]
+  },
+  "logins": [
+    {
+      "timestamp": 1541867160,
+      "ip": "172.42.64.6",
+      "location": {
+        "ip": "172.42.64.6",
+        "type": "ipv4",
+        "country_code": "US",
+        "country_name": "United States",
+        "region_code": "VA",
+        "region_name": "Virginia",
+        "city": "Charlottesville",
+        "zip": "22901",
+        "latitude": 38.0936,
+        "longitude": -78.5611
+      }
+    }
+  ],
+  "passwords": "ewogICJmaXJzdCIgOiAiRGF2aWQiLAogICJsYXN0IiA6ICJHb2xkc3RlaW4iLAogICJlbWFpbCIgOiAiZGF2aWRAZGF2aWQuY29tIiwKICAiZG4iOiAiY249ZGF2aWQgZGdvbGRzdGVpbixvdT1wZW9wbGUsb3U9cGFzc3dvcmtkIG9yZyxjPXVzIiwKICAiYXV0aFBhc3N3b3JkIiA6ICJwb2l3ODN2bGl1YXl3ZWxmaWF1d2hlZmxrYWpzZGhkcnZsOTM4bHd1M2lvaGYiLAogICJhY2Nlc3NUb2tlbiIgOiAibHMzOXZubHc5bnY4M3ZscjJ2bDNoMmwzcmp2c2xqdmhybi0yMzluLXIxOW5hLW4ybjF2OCIsCiAgImtub3duSVBzIjogWwogICAgIjE3Mi40Mi42NC42IgogIF0sCiAgImxvZ2lucyI6IFsKICAgIHsKICAgICAgInRpbWVzdGFtcCI6IDE1NDE4NjcxNjAsCiAgICAgICJpcCI6ICIxNzIuNDIuNjQuNiIsCiAgICAgICJsb2NhdGlvbiI6IHsKICAgICAgICAiaXAiOiAiMTcyLjQyLjY0LjYiLAogICAgICAgICJ0eXBlIjogImlwdjQiLAogICAgICAgICJjb250aW5lbnRfY29kZSI6ICJOQSIsCiAgICAgICAgImNvbnRpbmVudF9uYW1lIjogIk5vcnRoIEFtZXJpY2EiLAogICAgICAgICJjb3VudHJ5X2NvZGUiOiAiVVMiLAogICAgICAgICJjb3VudHJ5X25hbWUiOiAiVW5pdGVkIFN0YXRlcyIsCiAgICAgICAgInJlZ2lvbl9jb2RlIjogIlZBIiwKICAgICAgICAicmVnaW9uX25hbWUiOiAiVmlyZ2luaWEiLAogICAgICAgICJjaXR5IjogIkNoYXJsb3R0ZXN2aWxsZSIsCiAgICAgICAgInppcCI6ICIyMjkwMSIsCiAgICAgICAgImxhdGl0dWRlIjogMzguMDkzNiwKICAgICAgICAibG9uZ2l0dWRlIjogLTc4LjU2MTEsCiAgICAgICAgImxvY2F0aW9uIjogewogICAgICAgICAgImdlb25hbWVfaWQiOiA0NzUyMDMxLAogICAgICAgICAgImNhcGl0YWwiOiAiV2FzaGluZ3RvbiBELkMuIiwKICAgICAgICAgICJsYW5ndWFnZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiY29kZSI6ICJlbiIsCiAgICAgICAgICAgICAgIm5hbWUiOiAiRW5nbGlzaCIsCiAgICAgICAgICAgICAgIm5hdGl2ZSI6ICJFbmdsaXNoIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNvdW50cnlfZmxhZyI6ICJodHRwOi8vYXNzZXRzLmlwc3RhY2suY29tL2ZsYWdzL3VzLnN2ZyIsCiAgICAgICAgICAiY291bnRyeV9mbGFnX2Vtb2ppIjogIvCfh7rwn4e4IiwKICAgICAgICAgICJjb3VudHJ5X2ZsYWdfZW1vamlfdW5pY29kZSI6ICJVKzFGMUZBIFUrMUYxRjgiLAogICAgICAgICAgImNhbGxpbmdfY29kZSI6ICIxIiwKICAgICAgICAgICJpc19ldSI6IGZhbHNlCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgXQp9"
+}
+```

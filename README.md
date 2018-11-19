@@ -1,7 +1,28 @@
-# password manager service
+# Password Service
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/e43386786616de37f867/maintainability)](https://codeclimate.com/github/dgoldstein1/passwordservice/maintainability)
+
+[![Test Coverage](https://api.codeclimate.com/v1/badges/e43386786616de37f867/test_coverage)](https://codeclimate.com/github/dgoldstein1/passwordservice/test_coverage)
+
+[![CircleCI](https://circleci.com/gh/dgoldstein1/passwordservice.svg?style=svg)](https://circleci.com/gh/dgoldstein1/passwordservice)
+
 go server for safely storing and managing encrypted passwords
 
-![architecture](docs/diagrams/architecture.png)
+### Architecture
+
+![architecture](docs/api/architecture.png)
+
+### Features
+
+- geo-locating and IP tracking to prevent unknown logins
+- challenge and reponse weak authentication to prevent [person in the midle attacks](https://en.wikipedia.org/wiki/Challenge%E2%80%93response_authentication#Examples)
+- strong end to end encryption
+
+Also facilitates:
+
+- management and storage of user information
+- users to see when / where their passwords have been accessed from
+
 
 # Development
 
@@ -30,12 +51,17 @@ Clone project
 mkdir -p ${GOPATH}/src/github.com/dgoldstein1
 cd ${GOPATH}/src/github.com/dgoldstein1
 # clone using ssh. Make sure you've added your public key to gitlab
-git clone git@github.com:dgoldstein1/passwordmanagerservice.git
+git clone git@github.com:dgoldstein1/passwordservice.git
 ```
 
 #### Launch the Project
 
+- Generate server certs and certificate authorities. By default server certs are in `docker/passwordservice/certs`. 
+- You will need to generate client a p12 client cert. This should be added to the brower or used when testing with curl.
+
 ```sh
+# build docker image
+./build_docker_image.sh
 # start docker
 docker-compose up -d
 # see if all containers are up
@@ -74,4 +100,4 @@ go test -v -cover -covermode=count -coverprofile=coverage.out
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GLP License - see the [LICENSE.md](LICENSE.md) file for details
