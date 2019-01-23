@@ -8,7 +8,9 @@ defaults: &defaults
 
 version: 2
 jobs:
-  build-test:
+
+  # install depdencencies
+  install:
     <<: *defaults
     steps:
       - checkout
@@ -16,37 +18,71 @@ jobs:
           keys:
             - m2-{{ checksum "Gopkg.toml" }}
             - m2-
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: dep ensure -v
       - save_cache:
           paths:
             - vendor
           key: m2-{{ checksum "Gopkg.toml" }}
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run: dep ensure -v
+      
+      
+  # build go binary and save it to workspace
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: ./build_server.sh
+
+  # run unit tests
+  unit-tests:
+    <<: *defaults
+    steps:
+      - checkout
       - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - run: chmod +x ./cc-test-reporter
       - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
       - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
       - run: ./cc-test-reporter upload-coverage
 
+  # run full integration tests
+  integration-tests:
+    <<: *defaults
+    steps:
+      - checkout
+
+  # build tarball and docker image
+  build-artifcats:
+    <<: *defaults
+    steps:
+      - checkout
+
+  # deploy artifacts
   deploy:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "Gopkg.toml" }}
-            - m2-
-      - run: ./build_server.sh
-
 
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build-test
+      - install
+      - build:
+          requires:
+            - install
+      - unit-tests:
+          requires:
+            - build
+      - integration-tests:
+          requires:
+            - build
+      - build-artifcats:
+          requires:
+            - unit-tests
+            - integration-tests
       - deploy:
           requires:
-            - build-test
+            - build-artifcats
           filters:
             branches:
               only: master
