@@ -74,11 +74,17 @@ jobs:
           keys:
             - m2-{{ checksum "Gopkg.toml" }}
             - m2-
-      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - run: chmod +x ./cc-test-reporter
       - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
-      - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
-      - run: ./cc-test-reporter upload-coverage
+      - run:
+          name : "Push results to code coverage (master only)"
+          command : |
+            if [[ "$CIRCLE_BRANCH" != "master" ]]; then
+              curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+              chmod +x ./cc-test-reporter
+              ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
+              ./cc-test-reporter upload-coverage
+            fi
+
 
   # run full integration tests
   integration-tests:
@@ -102,10 +108,13 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: export $(cat VERSION | xargs)
-      - run: docker build . -t dgoldstein1/passwordservice:$VERSION -t dgoldstein1/passwordservice:latest
-      - run: docker push dgoldstein1/passwordservice:$VERSION
-      - run: docker push dgoldstein1/passwordservice:latest
+      - run: 
+          name : "build and push docker images"
+          command : |
+              export $(cat VERSION | xargs)
+              docker build . -t dgoldstein1/passwordservice:$VERSION -t dgoldstein1/passwordservice:latest
+              docker push dgoldstein1/passwordservice:$VERSION
+              docker push dgoldstein1/passwordservice:latest
 
   # publish github release with binary
   publish-github-release:
