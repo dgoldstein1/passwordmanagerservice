@@ -32,6 +32,10 @@ jobs:
     steps:
       - checkout
       - run: ./build_server.sh
+      - persist_to_workspace:
+          root : .
+          paths:
+            - /home/david/go/bin/passwordservice
 
   # run unit tests
   unit-tests:
@@ -52,9 +56,17 @@ jobs:
 
   # build tarball and docker image
   build-artifcats:
-    <<: *defaults
+    docker:
+      - image: humangeo/aglio
     steps:
       - checkout
+      # create documentation
+      - run: ./create_documentation.sh &> /dev/null
+      - run: ls -a ./docs/api/*
+      - persist_to_workspace:
+          root : .
+          paths:
+            - ./docs/api
 
   # deploy artifacts
   deploy:
