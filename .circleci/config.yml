@@ -9,6 +9,10 @@ defaults: &defaults
 version: 2
 jobs:
 
+  ###################
+  ## Core Utilties ##
+  ###################
+
   # install depdencencies
   install:
     <<: *defaults
@@ -31,28 +35,16 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - run: ls -a
       - run: go build -v -o passwordservice ./cmd/server
       - persist_to_workspace:
           root: .
           paths:
             - ./passwordservice
-
-  # run unit tests
-  unit-tests:
-    <<: *defaults
-    steps:
-      - checkout
-      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-      - run: chmod +x ./cc-test-reporter
-      - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
-      - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
-      - run: ./cc-test-reporter upload-coverage
-
-  # run full integration tests
-  integration-tests:
-    <<: *defaults
-    steps:
-      - checkout
 
   # create documentation
   create-documentation:
@@ -67,6 +59,44 @@ jobs:
           root : .
           paths:
             - ./docs/api
+
+
+  #############
+  ## Testing ##
+  #############
+
+  # run unit tests
+  unit-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - run: chmod +x ./cc-test-reporter
+      - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
+      - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
+      - run: ./cc-test-reporter upload-coverage
+
+  # run full integration tests
+  integration-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - attach_workspace:
+          at: .
+      - run: ls | grep password
+
+
+  ############################
+  ## Tasks for New Releases ##
+  ############################
 
   push-docker-image:
     <<: *defaults
@@ -107,21 +137,23 @@ workflows:
       - build:
           requires:
             - install
+
       - unit-tests:
           requires:
             - build
       - integration-tests:
           requires:
             - build
-
       - create-documentation:
           requires:
-            - unit-tests
-            - integration-tests
+            - build
+
 
       - push-docker-image:
           requires:
             - create-documentation
+            - unit-tests
+            - integration-tests
           filters:
             branches:
               only: master
@@ -129,6 +161,8 @@ workflows:
       - deploy:
           requires:
             - create-documentation
+            - unit-tests
+            - integration-tests
           filters:
             branches:
               only: master
@@ -136,6 +170,8 @@ workflows:
       - publish-github-release:
           requires:
             - create-documentation
+            - unit-tests
+            - integration-tests
           filters:
             branches:
               only: master

@@ -20,7 +20,7 @@ docs/api/*.html
 *.rpm 
 *.out
 ./server
-./passwordservice
+passwordservice
 coverage
 
 ####################################
@@ -182,4 +182,3 @@ git_cleanup.sh
 # Python3 
 ####################################
 venv
-./passwordservice
