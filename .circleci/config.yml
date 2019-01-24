@@ -31,11 +31,11 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - run: ./build_server.sh
+      - run: go build -v -o passwordservice ./cmd/server
       - persist_to_workspace:
-          root : .
+          root: .
           paths:
-            - /home/david/go/bin/passwordservice
+            - ./passwordservice
 
   # run unit tests
   unit-tests:
@@ -54,8 +54,8 @@ jobs:
     steps:
       - checkout
 
-  # build tarball and docker image
-  build-artifcats:
+  # create documentation
+  create-documentation:
     docker:
       - image: humangeo/aglio
     steps:
@@ -67,6 +67,31 @@ jobs:
           root : .
           paths:
             - ./docs/api
+
+  push-docker-image:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: export $(cat VERSION | xargs)
+      - run: docker build . -t dgoldstein1/passwordservice:$VERSION -t dgoldstein1/passwordservice:latest
+      - run: docker push dgoldstein1/passwordservice:$VERSION
+      - run: docker push dgoldstein1/passwordservice:latest
+
+  # publish github release with binary
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - checkout
+      # get binaries
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            export $(cat VERSION | xargs)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -replace ${VERSION} ./passwordservice
+      
 
   # deploy artifacts
   deploy:
@@ -88,13 +113,29 @@ workflows:
       - integration-tests:
           requires:
             - build
-      - build-artifcats:
+
+      - create-documentation:
           requires:
             - unit-tests
             - integration-tests
+
+      - push-docker-image:
+          requires:
+            - create-documentation
+          filters:
+            branches:
+              only: master
+
       - deploy:
           requires:
-            - build-artifcats
+            - create-documentation
+          filters:
+            branches:
+              only: master
+
+      - publish-github-release:
+          requires:
+            - create-documentation
           filters:
             branches:
               only: master
