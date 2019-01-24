@@ -8,7 +8,13 @@ defaults: &defaults
 
 version: 2
 jobs:
-  build-test:
+
+  ###################
+  ## Core Utilties ##
+  ###################
+
+  # install depdencencies
+  install:
     <<: *defaults
     steps:
       - checkout
@@ -16,19 +22,66 @@ jobs:
           keys:
             - m2-{{ checksum "Gopkg.toml" }}
             - m2-
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: dep ensure -v
       - save_cache:
           paths:
             - vendor
           key: m2-{{ checksum "Gopkg.toml" }}
+      - run: go get -u github.com/golang/dep/cmd/dep
+      - run: dep ensure -v
+      
+      
+  # build go binary and save it to workspace
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
+      - run: ls -a
+      - run: go build -v -o passwordservice ./cmd/server
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./passwordservice
+
+  # create documentation
+  create-documentation:
+    docker:
+      - image: humangeo/aglio
+    steps:
+      - checkout
+      # create documentation
+      - run: ./create_documentation.sh &> /dev/null
+      - run: ls -a ./docs/api/*
+      - persist_to_workspace:
+          root : .
+          paths:
+            - ./docs/api
+
+
+  #############
+  ## Testing ##
+  #############
+
+  # run unit tests
+  unit-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "Gopkg.toml" }}
+            - m2-
       - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
       - run: chmod +x ./cc-test-reporter
       - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
       - run: ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
       - run: ./cc-test-reporter upload-coverage
 
-  deploy:
+  # run full integration tests
+  integration-tests:
     <<: *defaults
     steps:
       - checkout
@@ -36,17 +89,89 @@ jobs:
           keys:
             - m2-{{ checksum "Gopkg.toml" }}
             - m2-
-      - run: ./build_server.sh
+      - attach_workspace:
+          at: .
+      - run: ls | grep password
 
+
+  ############################
+  ## Tasks for New Releases ##
+  ############################
+
+  push-docker-image:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: export $(cat VERSION | xargs)
+      - run: docker build . -t dgoldstein1/passwordservice:$VERSION -t dgoldstein1/passwordservice:latest
+      - run: docker push dgoldstein1/passwordservice:$VERSION
+      - run: docker push dgoldstein1/passwordservice:latest
+
+  # publish github release with binary
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - checkout
+      # get binaries
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            export $(cat VERSION | xargs)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -replace ${VERSION} ./passwordservice
+      
+
+  # deploy artifacts
+  deploy:
+    <<: *defaults
+    steps:
+      - checkout
 
 workflows:
   version: 2
   build-deploy:
     jobs:
-      - build-test
+      - install
+      - build:
+          requires:
+            - install
+
+      - unit-tests:
+          requires:
+            - build
+      - integration-tests:
+          requires:
+            - build
+      - create-documentation:
+          requires:
+            - build
+
+
+      - push-docker-image:
+          requires:
+            - create-documentation
+            - unit-tests
+            - integration-tests
+          filters:
+            branches:
+              only: master
+
       - deploy:
           requires:
-            - build-test
+            - create-documentation
+            - unit-tests
+            - integration-tests
+          filters:
+            branches:
+              only: master
+
+      - publish-github-release:
+          requires:
+            - create-documentation
+            - unit-tests
+            - integration-tests
           filters:
             branches:
               only: master
