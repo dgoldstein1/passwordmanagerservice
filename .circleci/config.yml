@@ -40,11 +40,11 @@ jobs:
             - m2-{{ checksum "Gopkg.toml" }}
             - m2-
       - run: ls -a
-      - run: go build -v -o passwordservice ./cmd/server
+      - run: go build -v -o passwordservice.bin ./cmd/server
       - persist_to_workspace:
           root: .
           paths:
-            - ./passwordservice
+            - ./passwordservice.bin
 
   # create documentation
   create-documentation:
@@ -78,7 +78,7 @@ jobs:
       - run:
           name : "Push results to code coverage (master only)"
           command : |
-            if [[ "$CIRCLE_BRANCH" != "master" ]]; then
+            if [[ "$CIRCLE_BRANCH" == "master" ]]; then
               curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
               chmod +x ./cc-test-reporter
               ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
@@ -105,13 +105,14 @@ jobs:
   ############################
 
   push-docker-image:
-    <<: *defaults
+    machine : true
     steps:
       - checkout
       - run: 
           name : "build and push docker images"
           command : |
               export $(cat VERSION | xargs)
+              docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
               docker build . -t dgoldstein1/passwordservice:$VERSION -t dgoldstein1/passwordservice:latest
               docker push dgoldstein1/passwordservice:$VERSION
               docker push dgoldstein1/passwordservice:latest
@@ -129,7 +130,7 @@ jobs:
           name: "Publish Release on GitHub"
           command: |
             export $(cat VERSION | xargs)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -replace ${VERSION} ./passwordservice
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./passwordservice.bin
       
 
   # deploy artifacts
