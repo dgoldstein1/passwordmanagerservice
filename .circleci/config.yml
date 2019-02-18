@@ -18,16 +18,13 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "Gopkg.toml" }}
-            - m2-
-      - save_cache:
-          paths:
-            - vendor
-          key: m2-{{ checksum "Gopkg.toml" }}
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure -v
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./vendor
+
       
       
   # build go binary and save it to workspace
@@ -35,10 +32,6 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "Gopkg.toml" }}
-            - m2-
       - run: ls -a
       - run: go build -v -o passwordservice.bin ./cmd/server
       - persist_to_workspace:

@@ -76,7 +76,7 @@ This server uses two types of weak challenge / response authentication.
 2) Additionally, if a user's IP address is know in the list of known IPs then the user is required to answer a question ("userQuestionResponse") which they have set (e.g. 'what is the name of your pet?')
 
 
-### Read Challenge [POST]
+### Generate Challenge [POST]
 
 Generate a new challenge in order to make an authenticated request to a CRUD endpoint.
 
@@ -157,7 +157,7 @@ Generate a new challenge in order to make an authenticated request to a CRUD end
     }
   }
 
-+ Response 500 (application/json)
++ Response 200 (application/json)
 
     {
       "error" : "'172.42.64.6' is not a registered IP for this user",
