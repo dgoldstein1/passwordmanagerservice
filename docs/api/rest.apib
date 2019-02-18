@@ -13,53 +13,103 @@ FORMAT: 1A
 
 ## CRUD Passwords [/passwords]
 
-Retrieve or update passwords.
+<img src="password-retrieval-workflow.png" alt="Workflow" width="500" text-align="center" align="middle" />
 
-### CRUD Passwords [POST]
+### Read Passwords [GET]
 
-This endpoint uses two types of weak challenge / response authentication. 
 
-1) Every 5-10 seconds a challenge token is deleted on the server. A new one is generated when the client POSTs to /passwords.
-2) Additionally, if a user's IP address is know in the list of known IPs then the user is required to answer a question which they have set (e.g. 'what is the name of your pet?')
++ Request  (application/json)
+  + Headers
 
-For each of these authentication protocols, there is a set number of max retries, after which the accout will be locked.
+          ChallengeResponse: "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf"
 
-+ challengeResponse (string) - Response to challenge authentication. See [Service Overview](index.html) for more information.
-+ answerResponse(string) - Response to question and answer authentication
-+ newPasswords(string) - new encrypted JSON to store as passwords
++ Response 200 (application/json)
 
-+ Request Initial Request (application/json)
+    {
+      "passwords": "ewogICJmaXJzdCIgOiAiRGF2aWQiLAogICJsYXN0IiA6ICJHb2xkc3RlaW4iLAogICJlbWFpbCIgOiAiZGF2aWRAZGF2aWQuY29tIiwKICAiZG4iOiAiY249ZGF2aWQgZGdvbGRzdGVpbixvdT1wZW9wbGUsb3U9cGFzc3dvcmtkIG9yZyxjPXVzIiwKICAiYXV0aFBhc3N3b3JkIiA6ICJwb2l3ODN2bGl1YXl3ZWxmaWF1d2hlZmxrYWpzZGhkcnZsOTM4bHd1M2lvaGYiLAogICJhY2Nlc3NUb2tlbiIgOiAibHMzOXZubHc5bnY4M3ZscjJ2bDNoMmwzcmp2c2xqdmhybi0yMzluLXIxOW5hLW4ybjF2OCIsCiAgImtub3duSVBzIjogWwogICAgIjE3Mi40Mi42NC42IgogIF0sCiAgImxvZ2lucyI6IFsKICAgIHsKICAgICAgInRpbWVzdGFtcCI6IDE1NDE4NjcxNjAsCiAgICAgICJpcCI6ICIxNzIuNDIuNjQuNiIsCiAgICAgICJsb2NhdGlvbiI6IHsKICAgICAgICAiaXAiOiAiMTcyLjQyLjY0LjYiLAogICAgICAgICJ0eXBlIjogImlwdjQiLAogICAgICAgICJjb250aW5lbnRfY29kZSI6ICJOQSIsCiAgICAgICAgImNvbnRpbmVudF9uYW1lIjogIk5vcnRoIEFtZXJpY2EiLAogICAgICAgICJjb3VudHJ5X2NvZGUiOiAiVVMiLAogICAgICAgICJjb3VudHJ5X25hbWUiOiAiVW5pdGVkIFN0YXRlcyIsCiAgICAgICAgInJlZ2lvbl9jb2RlIjogIlZBIiwKICAgICAgICAicmVnaW9uX25hbWUiOiAiVmlyZ2luaWEiLAogICAgICAgICJjaXR5IjogIkNoYXJsb3R0ZXN2aWxsZSIsCiAgICAgICAgInppcCI6ICIyMjkwMSIsCiAgICAgICAgImxhdGl0dWRlIjogMzguMDkzNiwKICAgICAgICAibG9uZ2l0dWRlIjogLTc4LjU2MTEsCiAgICAgICAgImxvY2F0aW9uIjogewogICAgICAgICAgImdlb25hbWVfaWQiOiA0NzUyMDMxLAogICAgICAgICAgImNhcGl0YWwiOiAiV2FzaGluZ3RvbiBELkMuIiwKICAgICAgICAgICJsYW5ndWFnZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiY29kZSI6ICJlbiIsCiAgICAgICAgICAgICAgIm5hbWUiOiAiRW5nbGlzaCIsCiAgICAgICAgICAgICAgIm5hdGl2ZSI6ICJFbmdsaXNoIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNvdW50cnlfZmxhZyI6ICJodHRwOi8vYXNzZXRzLmlwc3RhY2suY29tL2ZsYWdzL3VzLnN2ZyIsCiAgICAgICAgICAiY291bnRyeV9mbGFnX2Vtb2ppIjogIvCfh7rwn4e4IiwKICAgICAgICAgICJjb3VudHJ5X2ZsYWdfZW1vamlfdW5pY29kZSI6ICJVKzFGMUZBIFUrMUYxRjgiLAogICAgICAgICAgImNhbGxpbmdfY29kZSI6ICIxIiwKICAgICAgICAgICJpc19ldSI6IGZhbHNlCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgXQp9"
+}
+
++ Response 500 (application/json)
+
+    {
+      "error" : "error message here"
+    }
+
+
+### Update Passwords [POST]
+
++ newPasswords(string) - new encrypted JSON to store as passwords.
+
+
++ Request  (application/json)
+  + Headers
+
+          ChallengeResponse: "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf"
+  + Body
         
     {
       "newPasswords" : "slkdjf]-93jfpijs'dfija'jefw;oeuhwaehjshdg"
     }
 
 
-+ Request Second Request with Challenge Response (application/json)
-
-    {
-      "challengeResponse" : "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf",
-      "newPasswords" : "slkdjf]-93jfpijs'dfija'jefw;oeuhwaehjshdg"
-    }
-
-
-+ Request Second Request with Question Response (application/json)
-
-    {
-      "challengeResponse" : "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf",
-      "answerResponse" : "12/09/1993",
-      "newPasswords" : "slkdjf]-93jfpijs'dfija'jefw;oeuhwaehjshdg"
-    }
-
 + Response 200 (application/json)
 
+    {
+      "passwords": "ewogICJmaXJzdCIgOiAiRGF2aWQiLAogICJsYXN0IiA6ICJHb2xkc3RlaW4iLAogICJlbWFpbCIgOiAiZGF2aWRAZGF2aWQuY29tIiwKICAiZG4iOiAiY249ZGF2aWQgZGdvbGRzdGVpbixvdT1wZW9wbGUsb3U9cGFzc3dvcmtkIG9yZyxjPXVzIiwKICAiYXV0aFBhc3N3b3JkIiA6ICJwb2l3ODN2bGl1YXl3ZWxmaWF1d2hlZmxrYWpzZGhkcnZsOTM4bHd1M2lvaGYiLAogICJhY2Nlc3NUb2tlbiIgOiAibHMzOXZubHc5bnY4M3ZscjJ2bDNoMmwzcmp2c2xqdmhybi0yMzluLXIxOW5hLW4ybjF2OCIsCiAgImtub3duSVBzIjogWwogICAgIjE3Mi40Mi42NC42IgogIF0sCiAgImxvZ2lucyI6IFsKICAgIHsKICAgICAgInRpbWVzdGFtcCI6IDE1NDE4NjcxNjAsCiAgICAgICJpcCI6ICIxNzIuNDIuNjQuNiIsCiAgICAgICJsb2NhdGlvbiI6IHsKICAgICAgICAiaXAiOiAiMTcyLjQyLjY0LjYiLAogICAgICAgICJ0eXBlIjogImlwdjQiLAogICAgICAgICJjb250aW5lbnRfY29kZSI6ICJOQSIsCiAgICAgICAgImNvbnRpbmVudF9uYW1lIjogIk5vcnRoIEFtZXJpY2EiLAogICAgICAgICJjb3VudHJ5X2NvZGUiOiAiVVMiLAogICAgICAgICJjb3VudHJ5X25hbWUiOiAiVW5pdGVkIFN0YXRlcyIsCiAgICAgICAgInJlZ2lvbl9jb2RlIjogIlZBIiwKICAgICAgICAicmVnaW9uX25hbWUiOiAiVmlyZ2luaWEiLAogICAgICAgICJjaXR5IjogIkNoYXJsb3R0ZXN2aWxsZSIsCiAgICAgICAgInppcCI6ICIyMjkwMSIsCiAgICAgICAgImxhdGl0dWRlIjogMzguMDkzNiwKICAgICAgICAibG9uZ2l0dWRlIjogLTc4LjU2MTEsCiAgICAgICAgImxvY2F0aW9uIjogewogICAgICAgICAgImdlb25hbWVfaWQiOiA0NzUyMDMxLAogICAgICAgICAgImNhcGl0YWwiOiAiV2FzaGluZ3RvbiBELkMuIiwKICAgICAgICAgICJsYW5ndWFnZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiY29kZSI6ICJlbiIsCiAgICAgICAgICAgICAgIm5hbWUiOiAiRW5nbGlzaCIsCiAgICAgICAgICAgICAgIm5hdGl2ZSI6ICJFbmdsaXNoIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNvdW50cnlfZmxhZyI6ICJodHRwOi8vYXNzZXRzLmlwc3RhY2suY29tL2ZsYWdzL3VzLnN2ZyIsCiAgICAgICAgICAiY291bnRyeV9mbGFnX2Vtb2ppIjogIvCfh7rwn4e4IiwKICAgICAgICAgICJjb3VudHJ5X2ZsYWdfZW1vamlfdW5pY29kZSI6ICJVKzFGMUZBIFUrMUYxRjgiLAogICAgICAgICAgImNhbGxpbmdfY29kZSI6ICIxIiwKICAgICAgICAgICJpc19ldSI6IGZhbHNlCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgXQp9"
+}
+
++ Response 500 (application/json)
+
+    {
+      "error" : "error message here"
+    }
+
+
+## Group Authentication
+
+## Challenges [/challenge]
+
+This server uses two types of weak challenge / response authentication.
+
+
+1) A "challenge" is needed for each successful request to any CRUD endpoint.
+2) Additionally, if a user's IP address is know in the list of known IPs then the user is required to answer a question ("userQuestionResponse") which they have set (e.g. 'what is the name of your pet?')
+
+
+### Read Challenge [POST]
+
+Generate a new challenge in order to make an authenticated request to a CRUD endpoint.
+
+<img src="get-token-workflow.png" alt="Workflow" width="500" text-align="center" align="middle" />
+
++ userQuestionResponse(string) - Response to user-defined question and answer authentication
++ location(json) - [IP Stack Geolocation Object](https://ipstack.com/documentation)
+
++ Request Retrieve New Challenge (application/json)
+
   {
-    "challengeQuestion" : "sldkfjs309jfsdifjweifjweoifjsldkjf"
+    "location" : {
+      "timestamp": 1541867160,
+      "ip": "172.42.64.6",
+      "location": {
+        "ip": "172.42.64.6",
+        "type": "ipv4",
+        "country_code": "US",
+        "country_name": "United States",
+        "region_code": "VA",
+        "region_name": "Virginia",
+        "city": "Charlottesville",
+        "zip": "22901",
+        "latitude": 38.0936,
+        "longitude": -78.5611
+      }      
+    }
   }
 
 + Response 200 (application/json)
 
     {
+      "challenge" : "sldkjflskejflskdjflkjwe;vlakjev;kj",
       "user": {
         "first": "David",
         "last": "Goldstein",
@@ -82,13 +132,40 @@ For each of these authentication protocols, there is a set number of max retries
             "longitude": -78.5611
           }
         }
-      ],
-      "passwords": "ewogICJmaXJzdCIgOiAiRGF2aWQiLAogICJsYXN0IiA6ICJHb2xkc3RlaW4iLAogICJlbWFpbCIgOiAiZGF2aWRAZGF2aWQuY29tIiwKICAiZG4iOiAiY249ZGF2aWQgZGdvbGRzdGVpbixvdT1wZW9wbGUsb3U9cGFzc3dvcmtkIG9yZyxjPXVzIiwKICAiYXV0aFBhc3N3b3JkIiA6ICJwb2l3ODN2bGl1YXl3ZWxmaWF1d2hlZmxrYWpzZGhkcnZsOTM4bHd1M2lvaGYiLAogICJhY2Nlc3NUb2tlbiIgOiAibHMzOXZubHc5bnY4M3ZscjJ2bDNoMmwzcmp2c2xqdmhybi0yMzluLXIxOW5hLW4ybjF2OCIsCiAgImtub3duSVBzIjogWwogICAgIjE3Mi40Mi42NC42IgogIF0sCiAgImxvZ2lucyI6IFsKICAgIHsKICAgICAgInRpbWVzdGFtcCI6IDE1NDE4NjcxNjAsCiAgICAgICJpcCI6ICIxNzIuNDIuNjQuNiIsCiAgICAgICJsb2NhdGlvbiI6IHsKICAgICAgICAiaXAiOiAiMTcyLjQyLjY0LjYiLAogICAgICAgICJ0eXBlIjogImlwdjQiLAogICAgICAgICJjb250aW5lbnRfY29kZSI6ICJOQSIsCiAgICAgICAgImNvbnRpbmVudF9uYW1lIjogIk5vcnRoIEFtZXJpY2EiLAogICAgICAgICJjb3VudHJ5X2NvZGUiOiAiVVMiLAogICAgICAgICJjb3VudHJ5X25hbWUiOiAiVW5pdGVkIFN0YXRlcyIsCiAgICAgICAgInJlZ2lvbl9jb2RlIjogIlZBIiwKICAgICAgICAicmVnaW9uX25hbWUiOiAiVmlyZ2luaWEiLAogICAgICAgICJjaXR5IjogIkNoYXJsb3R0ZXN2aWxsZSIsCiAgICAgICAgInppcCI6ICIyMjkwMSIsCiAgICAgICAgImxhdGl0dWRlIjogMzguMDkzNiwKICAgICAgICAibG9uZ2l0dWRlIjogLTc4LjU2MTEsCiAgICAgICAgImxvY2F0aW9uIjogewogICAgICAgICAgImdlb25hbWVfaWQiOiA0NzUyMDMxLAogICAgICAgICAgImNhcGl0YWwiOiAiV2FzaGluZ3RvbiBELkMuIiwKICAgICAgICAgICJsYW5ndWFnZXMiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAiY29kZSI6ICJlbiIsCiAgICAgICAgICAgICAgIm5hbWUiOiAiRW5nbGlzaCIsCiAgICAgICAgICAgICAgIm5hdGl2ZSI6ICJFbmdsaXNoIgogICAgICAgICAgICB9CiAgICAgICAgICBdLAogICAgICAgICAgImNvdW50cnlfZmxhZyI6ICJodHRwOi8vYXNzZXRzLmlwc3RhY2suY29tL2ZsYWdzL3VzLnN2ZyIsCiAgICAgICAgICAiY291bnRyeV9mbGFnX2Vtb2ppIjogIvCfh7rwn4e4IiwKICAgICAgICAgICJjb3VudHJ5X2ZsYWdfZW1vamlfdW5pY29kZSI6ICJVKzFGMUZBIFUrMUYxRjgiLAogICAgICAgICAgImNhbGxpbmdfY29kZSI6ICIxIiwKICAgICAgICAgICJpc19ldSI6IGZhbHNlCiAgICAgICAgfQogICAgICB9CiAgICB9CiAgXQp9"
-}
+      ]      
+    }
+
++ Request Retrieve New Challenge from New Location (application/json)
+
+  {
+    "userQuestionResponse" : "Sharon Middle School",
+    "location" : {
+      "timestamp": 1541867160,
+      "ip": "172.42.64.6",
+      "location": {
+        "ip": "172.42.64.6",
+        "type": "ipv4",
+        "country_code": "US",
+        "country_name": "United States",
+        "region_code": "VA",
+        "region_name": "Virginia",
+        "city": "Charlottesville",
+        "zip": "22901",
+        "latitude": 38.0936,
+        "longitude": -78.5611
+      }      
+    }
+  }
 
 + Response 500 (application/json)
 
     {
-      "error" : "error message here"
+      "error" : "'172.42.64.6' is not a registered IP for this user",
+      "userQuestion" : "What Middle School did you go to?"
     }
 
++ Response 500 (application/json)
+
+    {
+      "error" : "error message here",
+    }
