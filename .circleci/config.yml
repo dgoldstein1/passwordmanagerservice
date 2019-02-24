@@ -21,10 +21,9 @@ jobs:
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure -v
       - persist_to_workspace:
-          root: .
+          root : .
           paths:
             - ./vendor
-
       
       
   # build go binary and save it to workspace
@@ -32,6 +31,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run: ls -a
       - run: go build -v -o passwordservice.bin ./cmd/server
       - persist_to_workspace:
@@ -45,6 +46,8 @@ jobs:
       - image: humangeo/aglio
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       # create documentation
       - run: ./create_documentation.sh &> /dev/null
       - run: ls -a ./docs/api/*
@@ -63,10 +66,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "Gopkg.toml" }}
-            - m2-
+      - attach_workspace:
+          at: .
       - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
       - run:
           name : "Push results to code coverage (master only)"
@@ -84,10 +85,6 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - m2-{{ checksum "Gopkg.toml" }}
-            - m2-
       - attach_workspace:
           at: .
       - run: ls | grep password
