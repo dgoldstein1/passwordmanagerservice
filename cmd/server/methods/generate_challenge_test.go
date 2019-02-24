@@ -1,4 +1,4 @@
-// crud_passwords_test.go
+// generate_challenge_test.go
 
 package methods
 
@@ -8,12 +8,12 @@ import (
 	"testing"
 )
 
-func TestCrudPasswords(t *testing.T) {
+func TestGenerateChallenge(t *testing.T) {
 	// place holder test
 	s := serverData{}
 	ctx := context.TODO()
-	request := pb.CrudRequest{}
-	_, err := s.CrudPasswords(ctx, &request)
+	request := pb.ChallengeRequest{}
+	_, err := s.GenerateChallenge(ctx, &request)
 	if err == nil {
 		t.Errorf("Expected error not to be nil")
 	}

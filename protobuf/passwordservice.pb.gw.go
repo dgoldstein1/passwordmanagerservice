@@ -29,18 +29,52 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 
 var (
-	filter_Passwordservice_CrudPasswords_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_Passwordservice_ReadPasswords_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_Passwordservice_CrudPasswords_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordserviceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Passwordservice_ReadPasswords_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordserviceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CrudRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Passwordservice_CrudPasswords_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Passwordservice_ReadPasswords_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.CrudPasswords(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.ReadPasswords(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_Passwordservice_UpdatePasswords_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_Passwordservice_UpdatePasswords_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordserviceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CrudRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Passwordservice_UpdatePasswords_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.UpdatePasswords(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_Passwordservice_GenerateChallenge_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_Passwordservice_GenerateChallenge_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordserviceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ChallengeRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Passwordservice_GenerateChallenge_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.GenerateChallenge(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -83,32 +117,63 @@ func RegisterPasswordserviceHandler(ctx context.Context, mux *runtime.ServeMux, 
 // "PasswordserviceClient" to call the correct interceptors.
 func RegisterPasswordserviceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PasswordserviceClient) error {
 
-	mux.Handle("POST", pattern_Passwordservice_CrudPasswords_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_Passwordservice_ReadPasswords_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
-		if cn, ok := w.(http.CloseNotifier); ok {
-			go func(done <-chan struct{}, closed <-chan bool) {
-				select {
-				case <-done:
-				case <-closed:
-					cancel()
-				}
-			}(ctx.Done(), cn.CloseNotify())
-		}
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		rctx, err := runtime.AnnotateContext(ctx, mux, req)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Passwordservice_CrudPasswords_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Passwordservice_ReadPasswords_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Passwordservice_CrudPasswords_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Passwordservice_ReadPasswords_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_Passwordservice_UpdatePasswords_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Passwordservice_UpdatePasswords_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Passwordservice_UpdatePasswords_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_Passwordservice_GenerateChallenge_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Passwordservice_GenerateChallenge_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_Passwordservice_GenerateChallenge_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -116,9 +181,17 @@ func RegisterPasswordserviceHandlerClient(ctx context.Context, mux *runtime.Serv
 }
 
 var (
-	pattern_Passwordservice_CrudPasswords_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"passwords"}, ""))
+	pattern_Passwordservice_ReadPasswords_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"passwords"}, ""))
+
+	pattern_Passwordservice_UpdatePasswords_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"passwords"}, ""))
+
+	pattern_Passwordservice_GenerateChallenge_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"challenge"}, ""))
 )
 
 var (
-	forward_Passwordservice_CrudPasswords_0 = runtime.ForwardResponseMessage
+	forward_Passwordservice_ReadPasswords_0 = runtime.ForwardResponseMessage
+
+	forward_Passwordservice_UpdatePasswords_0 = runtime.ForwardResponseMessage
+
+	forward_Passwordservice_GenerateChallenge_0 = runtime.ForwardResponseMessage
 )

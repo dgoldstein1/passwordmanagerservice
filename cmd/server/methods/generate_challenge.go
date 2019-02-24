@@ -8,7 +8,9 @@ import (
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 )
 
-// reads a user information
-func (s *serverData) CrudPasswords(ctx context.Context, request *pb.CrudRequest) (*pb.CrudResponse, error) {
+// get challenge token
+func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
+
+	
 	return nil, errors.New("not implemented")
 }
