@@ -83,6 +83,25 @@ Any changes made in the `./cmd/server` directors are automatically applied to th
 ./create_documentation.sh
 ```
 
+### Testing
+
+Install:
+
+- [inotifywait](https://github.com/rvoicilas/inotify-tools/wiki)
+- [npm and node](https://nodejs.org/en/)
+
+Then:
+
+```sh
+# start docker containers
+docker-compose up -d
+# setup integration tests
+cd integration-tests && npm install && cd ..
+# run all tests when any file in cmd/server changes
+./test_watch.sh
+```
+
+
 ### Deployment
 
 Develop and Master are automatically deployed on merge.
