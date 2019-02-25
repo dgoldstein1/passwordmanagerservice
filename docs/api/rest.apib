@@ -11,17 +11,22 @@ FORMAT: 1A
 
 ## Group Passwords
 
-## CRUD Passwords [/passwords]
+## CRUD Passwords [/passwords{?user}]
 
 <img src="password-retrieval-workflow.png" alt="Workflow" width="500" text-align="center" align="middle" />
+
+  + Parameters
+
+      + user: `david@david.com` (required, string) -  unique user id to retrieve passwords for.
 
 ### Read Passwords [GET]
 
 
 + Request  (application/json)
+
   + Headers
 
-          ChallengeResponse: "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf"
+      ChallengeResponse: "ejhrjhsdfkgjhsle4jhglskejrgh[oirhgq[ojrehglkjdsf"
 
 + Response 200 (application/json)
 
@@ -67,7 +72,11 @@ FORMAT: 1A
 
 ## Group Authentication
 
-## Challenges [/challenge]
+## Challenges [/challenge{?user}]
+
++ Parameters
+
+    + user: `david@david.com` (required, string) -  unique user id to get challenge for.
 
 This server uses two types of weak challenge / response authentication.
 

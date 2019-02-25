@@ -1,5 +1,5 @@
 # grpc-server
-    grpc_use_tls = true
+    grpc_use_tls = false
     grpc_server_host = ""
     grpc_server_port = 10000
 
@@ -12,7 +12,7 @@
     metrics_prometheus_uri_path = "/prometheus"
 
 # gateway-proxy
-    gateway_use_tls = true
+    gateway_use_tls = false
     use_gateway_proxy = true
     gateway_proxy_host = ""
     gateway_proxy_port = 8080
