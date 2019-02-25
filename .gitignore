@@ -24,6 +24,12 @@ passwordservice
 coverage
 
 ####################################
+# integration tests
+####################################
+
+integration-tests/node_modules
+
+####################################
 # IntelliJ
 ####################################
 .idea

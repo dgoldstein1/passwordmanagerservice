@@ -99,11 +99,9 @@ jobs:
             sleep 2
 
             echo "running integration tests"
-            curl localhost:8080/passwords
-            npm --version
-            node --version
             cd integration-tests
-            npm test -- --coverage
+            npm install
+            npm run testCI
 
 
   ############################
