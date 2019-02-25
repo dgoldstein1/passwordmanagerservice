@@ -1,0 +1,27 @@
+{
+  "name": "swagger-integration-test-ui",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "^3.0.1",
+    "@material-ui/icons": "^2.0.3",
+    "axios": "^0.18.0",
+    "axios-mock-adapter": "^1.15.0",
+    "cross-env": "^5.2.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-scripts": "1.1.5",
+    "whatwg-fetch": "^2.0.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "testCI": "cross-env CI=true react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "pretty": "prettier --write --tab-width 4 \"**/*.js\""
+  },
+  "devDependencies": {
+    "prettier": "^1.14.3"
+  }
+}

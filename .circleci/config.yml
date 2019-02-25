@@ -82,12 +82,26 @@ jobs:
 
   # run full integration tests
   integration-tests:
-    <<: *defaults
+    docker:
+      - image : dgoldstein1/node-with-mongo
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - run: ls | grep password
+      - run:
+          name : "run integration tests"
+          command : |
+            echo "starting space service"
+            ./passwordservice.bin  </dev/null &>passwordservice-ci-log-${CIRCLE_SHA1}.log &
+
+            echo "starting mongodb"
+            mongod </dev/null &>mongodb-ci-log-${CIRCLE_SHA1}.log &
+            sleep 2
+
+            echo "running integration tests"
+            cd integration-tests
+            npm install
+            npm run testCI
 
 
   ############################
