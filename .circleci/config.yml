@@ -83,7 +83,7 @@ jobs:
   # run full integration tests
   integration-tests:
     docker:
-      - image : dgoldstein1/node-with-mongo
+      - image : dgoldstein1/node-mongo-golang
     steps:
       - checkout
       - attach_workspace:
