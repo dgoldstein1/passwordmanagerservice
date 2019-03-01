@@ -63,8 +63,6 @@ jobs:
 
   # run unit tests
   unit-tests:
-    <<: *defaults
-    steps:
     docker:
       - image : dgoldstein1/node-mongo-golang
     steps:
