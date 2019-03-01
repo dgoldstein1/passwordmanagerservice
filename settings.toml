@@ -54,3 +54,8 @@
 # documentation
     docs_path="/opt/services/passwordservice/docs"
 
+# mongodb
+    mongodb_endpoint="mongodb://mongodb:27017"
+    mongodb_name="passwords"
+
+

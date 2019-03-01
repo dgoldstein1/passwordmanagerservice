@@ -63,12 +63,25 @@ jobs:
 
   # run unit tests
   unit-tests:
-    <<: *defaults
+    docker:
+      - image : dgoldstein1/node-mongo-golang
+    working_directory: /go/src/github.com/dgoldstein1/passwordservice
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - run: cd ./cmd/server/methods/ && go test -v -cover -covermode=count -coverprofile=coverage.out && cd ../../../
+      - run:
+          name : "run unit tests"
+          command : |
+            echo "starting mongodb"
+            mongod </dev/null &>mongodb-ci-log-${CIRCLE_SHA1}.log &
+            sleep 2
+
+            echo "running unit tests"
+            cd ./cmd/server/methods/
+            go test -v -cover -covermode=count -coverprofile=coverage.out
+            cd ../../../
+
       - run:
           name : "Push results to code coverage (master only)"
           command : |
@@ -83,7 +96,7 @@ jobs:
   # run full integration tests
   integration-tests:
     docker:
-      - image : dgoldstein1/node-with-mongo
+      - image : dgoldstein1/node-mongo-golang
     steps:
       - checkout
       - attach_workspace:

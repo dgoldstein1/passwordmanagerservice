@@ -2,7 +2,6 @@ package methods
 
 import (
 	"google.golang.org/grpc"
-
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/rs/zerolog"
 )
