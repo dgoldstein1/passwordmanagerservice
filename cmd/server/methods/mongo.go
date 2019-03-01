@@ -7,15 +7,16 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/globalsign/mgo"
 	"errors"
+	"time"
 )
 
 
 /**
  * Attempts to connect to mongodb using viper configuration variables
  **/
-func ConnectToMongo(logger zerolog.Logger) (*mgo.Session, error) {
+func ConnectToMongo(logger zerolog.Logger, timeout int) (*mgo.Session, error) {
 	logger.Debug().Msg("Connecting to mongodb at " + viper.GetString("mongodb_endpoint"))
-	return mgo.Dial(viper.GetString("mongodb_endpoint"))
+	return mgo.DialWithTimeout(viper.GetString("mongodb_endpoint"), time.Duration(timeout) * time.Second)
 }
 
 /**

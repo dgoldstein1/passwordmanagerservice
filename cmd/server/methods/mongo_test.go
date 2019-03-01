@@ -16,7 +16,7 @@ func TestConnectToMongo(t *testing.T) {
 
 	// positive test
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
-	sess, err := ConnectToMongo(logger)
+	sess, err := ConnectToMongo(logger, 1)
 
 	if (sess == nil || err != nil) {
 		t.Errorf("could not connect to mongo")
@@ -35,7 +35,7 @@ func TestCopySessionAndGetCollection(t *testing.T) {
 
 	// positive test
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
-	sess, err := ConnectToMongo(logger)
+	sess, err := ConnectToMongo(logger, 1)
 
 	c, newSess, err := CopySessionAndGetCollection(sess, "passwords")
 	if err != nil {
@@ -56,7 +56,7 @@ func TestCopySessionAndGetCollection(t *testing.T) {
 
 	// return error when connecting to bad db
 	viper.Set("mongodb_endpoint", "mongodb://lskdjflskjdflksjdf:27017")
-	sess, err = ConnectToMongo(logger)
+	sess, err = ConnectToMongo(logger, 1)
 
 	_, _, err = CopySessionAndGetCollection(sess, "passwords")
 	if err == nil {
