@@ -91,27 +91,23 @@ Generate a new challenge in order to make an authenticated request to a CRUD end
 
 <img src="get-token-workflow.png" alt="Workflow" width="500" text-align="center" align="middle" />
 
-+ userQuestionResponse(string) - Response to user-defined question and answer authentication
-+ location(json) - [IP Stack Geolocation Object](https://ipstack.com/documentation)
++ userQuestionResponse (string) - Response to user-defined question and answer authentication
++ location (required, json) - [IP Stack Geolocation Object](https://ipstack.com/documentation)
 
 + Request Retrieve New Challenge (application/json)
 
   {
     "location" : {
-      "timestamp": 1541867160,
       "ip": "172.42.64.6",
-      "location": {
-        "ip": "172.42.64.6",
-        "type": "ipv4",
-        "country_code": "US",
-        "country_name": "United States",
-        "region_code": "VA",
-        "region_name": "Virginia",
-        "city": "Charlottesville",
-        "zip": "22901",
-        "latitude": 38.0936,
-        "longitude": -78.5611
-      }      
+      "type": "ipv4",
+      "country_code": "US",
+      "country_name": "United States",
+      "region_code": "VA",
+      "region_name": "Virginia",
+      "city": "Charlottesville",
+      "zip": "22901",
+      "latitude": 38.0936,
+      "longitude": -78.5611
     }
   }
 
