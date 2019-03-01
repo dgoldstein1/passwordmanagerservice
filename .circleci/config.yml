@@ -65,6 +65,7 @@ jobs:
   unit-tests:
     docker:
       - image : dgoldstein1/node-mongo-golang
+    working_directory: /go/src/github.com/dgoldstein1/passwordservice
     steps:
       - checkout
       - attach_workspace:
