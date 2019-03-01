@@ -1,7 +1,5 @@
 
 defaults: &defaults
-  environment:
-    CC_TEST_REPORTER_ID: d78043952f109d50b0587f32df438111bfb1db352e5ddd2f460e91c3f47ff54c 
   docker:
     - image: circleci/golang:1.9
   working_directory: /go/src/github.com/dgoldstein1/passwordservice
@@ -82,13 +80,16 @@ jobs:
             go test -v -cover -covermode=count -coverprofile=coverage.out
             cd ../../../
 
+
       - run:
           name : "Push results to code coverage (master only)"
           command : |
             if [[ "$CIRCLE_BRANCH" == "master" ]]; then
+              export CC_TEST_REPORTER_ID=d78043952f109d50b0587f32df438111bfb1db352e5ddd2f460e91c3f47ff54c
+              cd ./cmd/server/methods
               curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
               chmod +x ./cc-test-reporter
-              ./cc-test-reporter format-coverage ./cmd/server/methods/coverage.out -t gocov
+              ./cc-test-reporter format-coverage ./coverage.out -t gocov
               ./cc-test-reporter upload-coverage
             fi
 
