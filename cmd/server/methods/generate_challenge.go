@@ -15,7 +15,15 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 		return nil, errors.Wrap(err, "Invalid request")
 	}
 	// is user in db?
-	
+	c, _, err := CopySessionAndGetCollection(&s.session, "passwords")
+	if err != nil {
+		return nil, errors.Wrap(err, "Could not get collection")
+	}
+	_, err = GetEntryFromDB(c, request.User)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error fetching user")
+	}
+
 	// is user locked out?
 	// location is known || answer is in header?
 	// answer already in db?

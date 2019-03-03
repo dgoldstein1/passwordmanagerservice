@@ -8,6 +8,10 @@ import (
 	"testing"
 	"reflect"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog"
+	"os"
+	"github.com/spf13/viper"
+	"github.com/globalsign/mgo/bson"
 )
 
 func TestGenerateChallenge(t *testing.T) {
@@ -18,10 +22,31 @@ func TestGenerateChallenge(t *testing.T) {
 			Ip : "192.0.0.1",
 		},
 	}
+	validDBEntry := pb.DBEntry{
+		User : &pb.User{
+			First : "david",
+			Last : "goldstein",
+			Email : validRequest.User,
+		},
+		Auth : &pb.Auth{
+			Dn : validRequest.User,
+		},
+		Logins : []*pb.Login{},
+		Passwords : "lskjdflskdjflskjdf",
+	}
 
 	// setup
-	s := serverData{}
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	zerolog.SetGlobalLevel(5)
+	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
+	viper.Set("mongodb_timeout", 1)
+	viper.Set("mongodb_name", "passwords")
+	sess, _ := ConnectToMongo(logger)
+	s := serverData{logger, *sess}
 	ctx := context.TODO()
+	// insert data
+	c, sess, _ := CopySessionAndGetCollection(sess, "passwords")
+	c.Insert(validDBEntry)
 	// test table
 	var tableTests = []struct {
 		name string
@@ -31,8 +56,13 @@ func TestGenerateChallenge(t *testing.T) {
 	}{
 
 		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field.")},
-		{"normal request", &validRequest, nil, errors.New("not implemented")},
+		{"valid request", &validRequest, nil, errors.New("not implemented")},
 	}
+
+	//cleanup
+	defer func() {
+		c.RemoveAll(bson.M{"auth.dn": validDBEntry.Auth.Dn})
+	}()
 
 	for _, tt := range tableTests {
 		t.Run(tt.name, func(t *testing.T) {
