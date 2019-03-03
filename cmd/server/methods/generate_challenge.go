@@ -11,6 +11,9 @@ import (
 // get challenge token
 func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
 	// validate request
+	if err := ValidateChallengeRequest(request); err != nil {
+		return nil, errors.Wrap(err, "Invalid request")
+	}
 	// is user in db?
 	// is user locked out?
 	// location is known || answer is in header?
