@@ -15,6 +15,7 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 		return nil, errors.Wrap(err, "Invalid request")
 	}
 	// is user in db?
+	
 	// is user locked out?
 	// location is known || answer is in header?
 	// answer already in db?
