@@ -9,6 +9,7 @@ import (
 	"errors"
 	"time"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
+	"github.com/globalsign/mgo/bson"
 )
 
 
@@ -35,6 +36,21 @@ func CopySessionAndGetCollection(sess *mgo.Session, collectionName string) (*mgo
 	return spaces, sessCopy, nil
 }
 
-func GetEntryFromDB(collection *mgo.Collection) (*pb.DBEntry, error) {
-	return nil, errors.New("not implemented")
+/**
+ * gets entry from db
+ **/
+func GetEntryFromDB(c *mgo.Collection, userDn string) (*pb.DBEntry, error) {
+	entry := pb.DBEntry{}
+	q := c.Find(bson.M{"auth.dn" : userDn})
+	// assert that only one was found
+	n, err := q.Count()
+	if err != nil {
+		return nil, err
+	}
+	if n > 1 {
+		return nil, errors.New("more than one userId found for: '" + userDn + "'")
+	}
+	// return first result with id
+	err = q.One(&entry)
+	return &entry, err
 }

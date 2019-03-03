@@ -8,6 +8,9 @@ import (
 	"testing"
 	"os"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
+	// "github.com/globalsign/mgo"
+	// "github.com/davecgh/go-spew/spew"
+	"github.com/globalsign/mgo/bson"
 )
 
 
@@ -79,14 +82,44 @@ func TestGetEntryFromDB(t *testing.T) {
 		Logins : []*pb.Login{},
 		Passwords : "lskjdflskdjflskjdf",
 	}
-	// setup
+	// initialize connection
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
 	viper.Set("mongodb_timeout", 1)
+	viper.Set("mongodb_name", "passwords")
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(5)
 	sess, err := ConnectToMongo(logger)
-	_,_, err = CopySessionAndGetCollection(sess, "user")
-	if (err != nil) {
+	c, sess, err := CopySessionAndGetCollection(sess, "passwords")
+	if err != nil {
+		t.Error(err)
+	}
+	// insert test data
+	err = c.Insert(user1)
+	if err != nil {
+		t.Error(err)
+	}
+	// run tests
+	var tableTests = []struct {
+		name string
+		userDn string
+		expectedResponse *pb.DBEntry
+		expectedError error
+	}{
+		{"valid retrieval", user1.Auth.Dn, &user1, nil},
+	}
+
+	for _, tt := range tableTests {
+		t.Run(tt.name, func(t *testing.T) {
+			actualResponse, actualError := GetEntryFromDB(c, tt.userDn)
+			if (actualResponse != nil && actualResponse.Auth != nil) {
+				AssertEqual(t, actualResponse.Auth.Dn, tt.expectedResponse.Auth.Dn)
+			}
+			AssertErrorEqual(t, actualError, tt.expectedError)
+		})
+	}
+
+	// cleanup
+	if _, err = c.RemoveAll(bson.M{"auth.dn": user1.Auth.Dn}); err != nil {
 		t.Error(err)
 	}
 

@@ -8,6 +8,7 @@ import (
 	"testing"
 	"reflect"
 	"github.com/pkg/errors"
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestGenerateChallenge(t *testing.T) {
@@ -48,11 +49,18 @@ func AssertEqual(t *testing.T, a interface{}, b interface{}) {
 	if a == b {
 		return
 	}
+	if cmp.Equal(a,b) {
+		return
+	}
 	// debug.PrintStack()
-	t.Errorf("Received %v (type %v), expected %v (type %v)", a, reflect.TypeOf(a), b, reflect.TypeOf(b))
+	t.Errorf("Received '%v' (type %v), expected '%v' (type %v)", a, reflect.TypeOf(a), b, reflect.TypeOf(b))
 }
 
 func AssertErrorEqual(t *testing.T, a error, b error) {
+	if (a == nil || b == nil) {
+		AssertEqual(t, a, b)
+		return
+	}
 	if (a.Error() == b.Error()) {
 		return
 	}
