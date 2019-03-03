@@ -8,6 +8,7 @@ import (
 	"github.com/globalsign/mgo"
 	"errors"
 	"time"
+	pb "github.com/dgoldstein1/passwordservice/protobuf"
 )
 
 
@@ -32,4 +33,8 @@ func CopySessionAndGetCollection(sess *mgo.Session, collectionName string) (*mgo
 	sessCopy := sess.Copy()
 	spaces := sess.DB(viper.GetString("mongodb_name")).C(collectionName)
 	return spaces, sessCopy, nil
+}
+
+func GetUserFromDB(collection *mgo.Collection) (*pb.DBEntry, error) {
+	return nil, errors.New("not implemented")
 }
