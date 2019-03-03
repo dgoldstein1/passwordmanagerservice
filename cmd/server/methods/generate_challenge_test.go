@@ -35,6 +35,13 @@ func TestGenerateChallenge(t *testing.T) {
 		Passwords : "lskjdflskdjflskjdf",
 	}
 
+	nonExistentUserRequest := pb.ChallengeRequest{
+		User : "sdlkjf239jf-23jsdf",
+		Location : &pb.Location{
+			Ip : "192.0.0.1",
+		},
+	}
+
 	// setup
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(5)
@@ -56,6 +63,7 @@ func TestGenerateChallenge(t *testing.T) {
 	}{
 
 		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field.")},
+		{"error fetching user", &nonExistentUserRequest, nil, errors.New("Error fetching user: no userDn found for: '" + nonExistentUserRequest.User + "'")},
 		{"valid request", &validRequest, nil, errors.New("not implemented")},
 	}
 
