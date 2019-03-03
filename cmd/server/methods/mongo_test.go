@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"testing"
 	"os"
-	// pb "github.com/dgoldstein1/passwordservice/protobuf"
+	pb "github.com/dgoldstein1/passwordservice/protobuf"
 )
 
 
@@ -65,9 +65,20 @@ func TestCopySessionAndGetCollection(t *testing.T) {
 	}
 }
 
-func TestGetUserFromDB(t *testing.T) {
+func TestGetEntryFromDB(t *testing.T) {
 	// data used in tests
-	
+	user1 := pb.DBEntry{
+		User : &pb.User{
+			First : "test",
+			Last : "user1",
+			Email : "test@user1.com",
+		},
+		Auth : &pb.Auth{
+			Dn : "test@user1.com",
+		},
+		Logins : []*pb.Login{},
+		Passwords : "lskjdflskdjflskjdf",
+	}
 	// setup
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
 	viper.Set("mongodb_timeout", 1)

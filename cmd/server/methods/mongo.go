@@ -35,6 +35,6 @@ func CopySessionAndGetCollection(sess *mgo.Session, collectionName string) (*mgo
 	return spaces, sessCopy, nil
 }
 
-func GetUserFromDB(collection *mgo.Collection) (*pb.DBEntry, error) {
+func GetEntryFromDB(collection *mgo.Collection) (*pb.DBEntry, error) {
 	return nil, errors.New("not implemented")
 }
