@@ -21,7 +21,3 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	
 	return nil, errors.New("not implemented")
 }
-
-func ValidateChallengeRequest(request *pb.ChallengeRequest) error {
-	return errors.New("not implemented")
-}
