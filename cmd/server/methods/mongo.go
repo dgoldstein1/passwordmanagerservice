@@ -40,17 +40,17 @@ func CopySessionAndGetCollection(sess *mgo.Session, collectionName string) (*mgo
  * gets entry from db
  **/
 func GetEntryFromDB(c *mgo.Collection, userDn string) (*pb.DBEntry, error) {
-	entry := pb.DBEntry{}
 	q := c.Find(bson.M{"auth.dn" : userDn})
 	// assert that only one was found
-	n, err := q.Count()
-	if err != nil {
-		return nil, err
-	}
+	n, _ := q.Count()
 	if n > 1 {
-		return nil, errors.New("more than one userId found for: '" + userDn + "'")
+		return nil, errors.New("more than one userDn found for: '" + userDn + "'")
+	}
+	if n < 1 {
+		return nil, errors.New("no userDn found for: '" + userDn + "'")
 	}
 	// return first result with id
-	err = q.One(&entry)
+	entry := pb.DBEntry{}
+	err := q.One(&entry)
 	return &entry, err
 }

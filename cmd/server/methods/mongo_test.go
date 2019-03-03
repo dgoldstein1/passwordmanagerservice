@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/viper"
 	"testing"
 	"os"
+	"errors"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
-	// "github.com/globalsign/mgo"
 	// "github.com/davecgh/go-spew/spew"
 	"github.com/globalsign/mgo/bson"
 )
@@ -82,6 +82,11 @@ func TestGetEntryFromDB(t *testing.T) {
 		Logins : []*pb.Login{},
 		Passwords : "lskjdflskdjflskjdf",
 	}
+	user2 := pb.DBEntry{
+		Auth : &pb.Auth{
+			Dn : "test@user2.com",
+		},
+	}
 	// initialize connection
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
 	viper.Set("mongodb_timeout", 1)
@@ -94,10 +99,9 @@ func TestGetEntryFromDB(t *testing.T) {
 		t.Error(err)
 	}
 	// insert test data
-	err = c.Insert(user1)
-	if err != nil {
-		t.Error(err)
-	}
+	c.Insert(user1)
+	c.Insert(user2)
+	c.Insert(user2)
 	// run tests
 	var tableTests = []struct {
 		name string
@@ -106,7 +110,15 @@ func TestGetEntryFromDB(t *testing.T) {
 		expectedError error
 	}{
 		{"valid retrieval", user1.Auth.Dn, &user1, nil},
+		{"finding more than one user", user2.Auth.Dn, nil, errors.New("more than one userDn found for: 'test@user2.com'")},
+		{"find no user", "this is a bad user dn", nil, errors.New("no userDn found for: 'this is a bad user dn'")},
 	}
+
+	defer func() {
+		c.RemoveAll(bson.M{"auth.dn": user1.Auth.Dn})
+		c.RemoveAll(bson.M{"auth.dn": user2.Auth.Dn})		
+	}()
+
 
 	for _, tt := range tableTests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -117,10 +129,4 @@ func TestGetEntryFromDB(t *testing.T) {
 			AssertErrorEqual(t, actualError, tt.expectedError)
 		})
 	}
-
-	// cleanup
-	if _, err = c.RemoveAll(bson.M{"auth.dn": user1.Auth.Dn}); err != nil {
-		t.Error(err)
-	}
-
 }

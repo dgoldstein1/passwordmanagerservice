@@ -8,7 +8,6 @@ import (
 	"testing"
 	"reflect"
 	"github.com/pkg/errors"
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestGenerateChallenge(t *testing.T) {
@@ -46,10 +45,7 @@ func TestGenerateChallenge(t *testing.T) {
 
 // adopted taken from https://gist.github.com/samalba/6059502
 func AssertEqual(t *testing.T, a interface{}, b interface{}) {
-	if a == b {
-		return
-	}
-	if cmp.Equal(a,b) {
+	if a == b { 
 		return
 	}
 	// debug.PrintStack()
