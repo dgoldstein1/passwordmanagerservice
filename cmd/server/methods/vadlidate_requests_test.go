@@ -13,14 +13,14 @@ func TestValidateChallengeRequest(t *testing.T) {
 		User : "davd@david.com",
 	}
 	err := ValidateChallengeRequest(&requestWithoutLocation)
-	if (err == nil || err.Error() != "'Location' is a required field.") {
+	if (err == nil || err.Error() != "'location' is a required field.") {
 		t.Errorf("Expected error to be thrown")
 	}
 	// must pass location.ip
 	requestWithoutIp := pb.ChallengeRequest{
 		User : "davd@david.com",
 		Location : &pb.Location{
-			Ip : "172.42.74.6",
+			Ip : "",
 		},
 	}
 	err = ValidateChallengeRequest(&requestWithoutIp)
@@ -34,5 +34,16 @@ func TestValidateChallengeRequest(t *testing.T) {
 	err = ValidateChallengeRequest(&requestWithoutUser)
 	if (err == nil || err.Error() != "'user' is a required field.") {
 		t.Errorf("Expected error to be thrown")
+	}
+	// returns nil on normal request
+	validRequest := pb.ChallengeRequest{
+		User : "davd@david.com",
+		Location : &pb.Location{
+			Ip : "192.0.0.1",
+		},
+	}
+	err = ValidateChallengeRequest(&validRequest)
+	if err != nil {
+		t.Error(err)
 	}
 }

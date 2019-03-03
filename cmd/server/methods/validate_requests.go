@@ -8,5 +8,18 @@ import (
 )
 
 func ValidateChallengeRequest(request *pb.ChallengeRequest) error {
-	return errors.New("not implemented")
+	// must have 'User'
+	if request.User == "" {
+		return errors.New("'user' is a required field.")
+	}
+	// must have 'Location'
+	if request.Location == nil {
+		return errors.New("'location' is a required field.")
+	}
+	// must have 'Location.Ip'
+	if request.Location.Ip == "" {
+		return errors.New("'location.ip' is a required field.")
+	}
+
+	return nil
 }
