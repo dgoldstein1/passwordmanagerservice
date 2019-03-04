@@ -596,6 +596,7 @@
     "github.com/deciphernow/gm-fabric-go/tlsutil",
     "github.com/ghodss/yaml",
     "github.com/globalsign/mgo",
+    "github.com/globalsign/mgo/bson",
     "github.com/golang/glog",
     "github.com/golang/protobuf/proto",
     "github.com/grpc-ecosystem/go-grpc-middleware/auth",

@@ -35,7 +35,6 @@ The Password service keeps track of three kinds of information
 | `authPassword`  | Shared client <-> server secret             |     string    |
 | `accessToken`  | Challenge / Response answer (temporary)          |     string    |
 | `authQuestions`  | Plain text questions and answer from user to authenticate  if not in list of known IPs       |    list[string]     |
-| `locked`  | is this account locked?        |    bool     |
 | `failedLogins`  | Number of times the user has failed to log in, reset on every successful login        |    number     |
 | `knownIPs`  | pre-aggregated list of IPs user has logged in from        |    list[string]     |
 
@@ -79,7 +78,6 @@ List of geolocated logins. See [ip stack API](https://ipstack.com/documentation)
   "logins": [
     {
       "timestamp": 1541867160,
-      "ip": "172.42.64.6",
       "location": {
         "ip": "172.42.64.6",
         "type": "ipv4",
