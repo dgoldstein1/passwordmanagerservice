@@ -130,3 +130,55 @@ func TestGetEntryFromDB(t *testing.T) {
 		})
 	}
 }
+
+
+func TestUpdateEntry(t *testing.T) {
+	// data used in tests
+	user1 := pb.DBEntry{
+		User : &pb.User{
+			First : "test",
+			Last : "user1",
+			Email : "test3@user3.com",
+		},
+		Auth : &pb.Auth{
+			Dn : "test3@user3.com",
+		},
+		Logins : []*pb.Login{},
+		Passwords : "lskjdflskdjflskjdf",
+	}
+	// initialize connection
+	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
+	viper.Set("mongodb_timeout", 1)
+	viper.Set("mongodb_name", "passwords")
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	zerolog.SetGlobalLevel(5)
+	sess, err := ConnectToMongo(logger)
+	c, sess, err := CopySessionAndGetCollection(sess, "passwords")
+	if err != nil {
+		t.Error(err)
+	}
+	// insert test data
+	c.Insert(user1)
+	// run tests
+	var tableTests = []struct {
+		name string
+		userDn string
+		updatedEntry *pb.DBEntry
+		expectedError error
+	}{
+		{"valid update", user1.Auth.Dn, &user1, nil},
+		{"user does not exist", "blag@bag.com", &user1, errors.New("not found")},
+	}
+
+	defer func() {
+		c.RemoveAll(bson.M{"auth.dn": user1.Auth.Dn})
+	}()
+
+
+	for _, tt := range tableTests {
+		t.Run(tt.name, func(t *testing.T) {
+			actualError := UpdateEntry(c, tt.userDn, tt.updatedEntry)
+			AssertErrorEqual(t, actualError, tt.expectedError)
+		})
+	}
+}

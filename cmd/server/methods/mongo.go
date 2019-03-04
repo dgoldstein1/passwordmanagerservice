@@ -54,3 +54,7 @@ func GetEntryFromDB(c *mgo.Collection, userDn string) (*pb.DBEntry, error) {
 	err := q.One(&entry)
 	return &entry, err
 }
+
+func UpdateEntry(c *mgo.Collection, userDn string, newEntry *pb.DBEntry) error {
+	return c.Update(bson.M{"auth.dn" : userDn}, newEntry)
+}
