@@ -6,6 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
+	"github.com/spf13/viper"
 )
 
 // get challenge token
@@ -19,12 +20,14 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	if err != nil {
 		return nil, errors.Wrap(err, "Could not get collection")
 	}
-	_, err = GetEntryFromDB(c, request.User)
+	entry, err := GetEntryFromDB(c, request.User)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error fetching user")
 	}
-
 	// is user locked out?
+	if int(entry.Auth.FailedLogins) > viper.GetInt("max_failed_logins") {
+		return nil, errors.New("'" + request.User + "' is locked out. Please contact an administrator to regain access.")
+	}
 	// location is known || answer is in header?
 	// answer already in db?
 	// generate challenge

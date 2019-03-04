@@ -32,6 +32,7 @@ func TestGenerateChallenge(t *testing.T) {
 		},
 		Auth : &pb.Auth{
 			Dn : validRequest.User,
+			FailedLogins : 0,
 		},
 		Logins : []*pb.Login{},
 		Passwords : "lskjdflskdjflskjdf",
@@ -44,11 +45,31 @@ func TestGenerateChallenge(t *testing.T) {
 		},
 	}
 
+	lockedOutRequest := pb.ChallengeRequest{
+		User : "locked@out.com",
+		Location : &pb.Location{
+			Ip : "192.0.0.1",
+		},
+	}
+	lockedOutUser := pb.DBEntry{
+		User : &pb.User{
+			First : "david",
+			Last : "goldstein",
+			Email : lockedOutRequest.User,
+		},
+		Auth : &pb.Auth{
+			Dn : lockedOutRequest.User,
+			FailedLogins : 6,
+		},
+	}
+
 	// setup
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(5)
 	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
+	viper.Set("mongodb_endpoint", "mongodb://localhost:27017")
 	viper.Set("mongodb_timeout", 1)
+	viper.Set("max_failed_logins", 5)
 	viper.Set("mongodb_name", "passwords")
 	sess, _ := ConnectToMongo(logger)
 	s := serverData{logger, *sess}
@@ -56,6 +77,7 @@ func TestGenerateChallenge(t *testing.T) {
 	// insert data
 	c, sess, _ := CopySessionAndGetCollection(sess, "passwords")
 	c.Insert(validDBEntry)
+	c.Insert(lockedOutUser)
 	// test table
 	var tableTests = []struct {
 		name string
@@ -66,12 +88,14 @@ func TestGenerateChallenge(t *testing.T) {
 
 		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field.")},
 		{"error fetching user", &nonExistentUserRequest, nil, errors.New("Error fetching user: no userDn found for: '" + nonExistentUserRequest.User + "'")},
+		{"locked out user", &lockedOutRequest, nil, errors.New("'locked@out.com' is locked out. Please contact an administrator to regain access.")},
 		{"valid request", &validRequest, nil, errors.New("not implemented")},
 	}
 
 	//cleanup
 	defer func() {
 		c.RemoveAll(bson.M{"auth.dn": validDBEntry.Auth.Dn})
+		c.RemoveAll(bson.M{"auth.dn": lockedOutUser.Auth.Dn})
 	}()
 
 	for _, tt := range tableTests {
