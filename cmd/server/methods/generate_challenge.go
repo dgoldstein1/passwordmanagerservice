@@ -35,6 +35,9 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 		return nil, errors.New("Unsuccessful login")
 	}
 	// answer already in db?
+	if entry.Auth.AccessToken != "" {
+		return nil, errors.New("Challenge request has already been created")
+	}
 	// generate challenge
 	// add login to list
 

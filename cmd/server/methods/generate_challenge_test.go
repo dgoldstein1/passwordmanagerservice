@@ -114,6 +114,23 @@ func TestGenerateChallenge(t *testing.T) {
 		},
 	}
 
+	alreadyExistsRequest := pb.ChallengeRequest{
+		User : "already@exists.com",
+		Location : &pb.Location{
+			Ip : "192.0.0.1",
+		},
+	}
+	alreadyExistsEntry := pb.DBEntry{
+		Auth : &pb.Auth{
+			Dn : alreadyExistsRequest.User,
+			FailedLogins : 0,
+			KnownIps : []string{"192.0.0.1"},
+			AccessToken : "sdfslkjlkje",
+		},
+		Logins : []*pb.Login{},
+		Passwords : "lskjdflskdjflskjdf",
+	}
+
 	// setup
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(5)
@@ -131,6 +148,7 @@ func TestGenerateChallenge(t *testing.T) {
 	c.Insert(lockedOutUser)
 	c.Insert(unknownLocation)
 	c.Insert(wrongAnswer)
+	c.Insert(alreadyExistsEntry)
 	// test table
 	var tableTests = []struct {
 		name string
@@ -144,6 +162,7 @@ func TestGenerateChallenge(t *testing.T) {
 		{"locked out user", &lockedOutRequest, nil, errors.New("'locked@out.com' is locked out. Please contact an administrator to regain access.")},
 		{"unknown location", &unknownLocationRequest, nil, errors.New("Unsuccessful login")},
 		{"bad response to question and unknown location", &wrongAnswerRequest, nil, errors.New("Unsuccessful login")},
+		{"challenge token already exists", &alreadyExistsRequest, nil, errors.New("Challenge request has already been created")},
 		{"valid request", &validRequest, nil, errors.New("not implemented")},
 	}
 
@@ -153,6 +172,7 @@ func TestGenerateChallenge(t *testing.T) {
 		c.RemoveAll(bson.M{"auth.dn": lockedOutUser.Auth.Dn})
 		c.RemoveAll(bson.M{"auth.dn": unknownLocation.Auth.Dn})
 		c.RemoveAll(bson.M{"auth.dn": wrongAnswer.Auth.Dn})
+		c.RemoveAll(bson.M{"auth.dn": alreadyExistsEntry.Auth.Dn})
 	}()
 
 	for _, tt := range tableTests {
