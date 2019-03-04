@@ -23,6 +23,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "davd@david.com",
 		Location : &pb.Location{
 			Ip : "192.0.0.1",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",			
 		},
 	}
 	validDBEntry := pb.DBEntry{
@@ -53,6 +56,9 @@ func TestGenerateChallenge(t *testing.T) {
 			&pb.Login{
 				Location : &pb.Location{
 					Ip : "192.0.0.1",
+					Latitude : 25,
+					Longitude : 25,
+					CountryCode : "RU",	
 				},
 			},
 		},
@@ -64,6 +70,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "sdlkjf239jf-23jsdf",
 		Location : &pb.Location{
 			Ip : "192.0.0.1",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",	
 		},
 	}
 
@@ -71,6 +80,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "locked@out.com",
 		Location : &pb.Location{
 			Ip : "192.0.0.1",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",	
 		},
 	}
 	lockedOutUser := pb.DBEntry{
@@ -89,6 +101,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "unkown@location.com",
 		Location : &pb.Location{
 			Ip : "192.0.0.2",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",	
 		},
 	}
 
@@ -115,6 +130,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "wrong@answer.com",
 		Location : &pb.Location{
 			Ip : "192.0.0.2",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",	
 		},
 		UserQuestionResponse : &pb.AuthQuestion{
 			Q : "what is your favorite color?",
@@ -145,6 +163,9 @@ func TestGenerateChallenge(t *testing.T) {
 		User : "already@exists.com",
 		Location : &pb.Location{
 			Ip : "192.0.0.1",
+			Latitude : 25,
+			Longitude : 25,
+			CountryCode : "RU",	
 		},
 	}
 	alreadyExistsEntry := pb.DBEntry{
@@ -218,7 +239,7 @@ func TestGenerateChallenge(t *testing.T) {
 	t.Run("valid request and response", func(t *testing.T) {
 		actualResponse, actualError := s.GenerateChallenge(ctx, &validRequest)
 		AssertErrorEqual(t, actualError, nil)
-		if actualResponse.Logins[0].Timestamp == 0 {
+		if (actualResponse == nil || actualResponse.Logins[0].Timestamp == 0) {
 			t.Errorf("expected timestamp to not be falsy but was %d", actualResponse.Logins[0].Timestamp)
 		}
 		// remove timestamp

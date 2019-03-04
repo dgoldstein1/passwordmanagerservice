@@ -20,6 +20,12 @@ func ValidateChallengeRequest(request *pb.ChallengeRequest) error {
 	if request.Location.Ip == "" {
 		return errors.New("'location.ip' is a required field.")
 	}
+	if (request.Location.Latitude == 0 || request.Location.Longitude == 0) {
+		return errors.New("'location.latitude and location.longitude are required fields")
+	}
+	if (request.Location.CountryCode == "") {
+		return errors.New("'location.countryCode' is a required field.")
+	}
 
 	return nil
 }
