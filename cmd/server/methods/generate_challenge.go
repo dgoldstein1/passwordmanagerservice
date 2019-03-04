@@ -32,7 +32,16 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	locationIsNotKnown := StringInArray(request.Location.Ip, entry.Auth.KnownIps) == false
 	invalidResponseToAnswer := AnswerInAuthQuestions(request, entry.Auth.AuthQuestions) == false
 	if locationIsNotKnown && invalidResponseToAnswer {
-		return nil, errors.New("Unsuccessful login")
+		// increment unsuccessful logins
+		entry.Auth.FailedLogins = entry.Auth.FailedLogins + 1
+		if err := UpdateEntry(c, entry.Auth.Dn, entry); err != nil {
+			return nil, errors.Wrap(err, "Could not increment user")
+		}
+		// return new challenge question
+		return &pb.ChallengeResponse{
+			Error : "Login Unsuccessful",
+			UserQuestion : GetNewAuthQuestion(request, entry.Auth.AuthQuestions),
+		}, nil
 	}
 	// answer already in db?
 	if entry.Auth.AccessToken != "" {

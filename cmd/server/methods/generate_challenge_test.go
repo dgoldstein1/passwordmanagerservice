@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
+	"fmt"
 	"os"
 	"github.com/spf13/viper"
 	"github.com/globalsign/mgo/bson"
@@ -76,6 +77,12 @@ func TestGenerateChallenge(t *testing.T) {
 			Ip : "192.0.0.2",
 		},
 	}
+
+	unknownLocationResponse := pb.ChallengeResponse{
+		Error : "Login Unsuccessful",
+		UserQuestion : "what is your favorite color?",
+	}
+
 	unknownLocation := pb.DBEntry{
 		Auth : &pb.Auth{
 			Dn : unknownLocationRequest.User,
@@ -100,6 +107,12 @@ func TestGenerateChallenge(t *testing.T) {
 			A : "yellow",
 		},
 	}
+
+	wrongAnswerResponse := pb.ChallengeResponse{
+		Error : "Login Unsuccessful",
+		UserQuestion : "what is your favorite color?",
+	}
+
 	wrongAnswer := pb.DBEntry{
 		Auth : &pb.Auth{
 			Dn : wrongAnswerRequest.User,
@@ -155,15 +168,16 @@ func TestGenerateChallenge(t *testing.T) {
 		request *pb.ChallengeRequest
 		expectedResponse *pb.ChallengeResponse
 		expectedError error
+		stringifiedComparison bool
 	}{
 
-		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field.")},
-		{"error fetching user", &nonExistentUserRequest, nil, errors.New("Error fetching user: no userDn found for: '" + nonExistentUserRequest.User + "'")},
-		{"locked out user", &lockedOutRequest, nil, errors.New("'locked@out.com' is locked out. Please contact an administrator to regain access.")},
-		{"unknown location", &unknownLocationRequest, nil, errors.New("Unsuccessful login")},
-		{"bad response to question and unknown location", &wrongAnswerRequest, nil, errors.New("Unsuccessful login")},
-		{"challenge token already exists", &alreadyExistsRequest, nil, errors.New("Challenge request has already been created")},
-		{"valid request", &validRequest, nil, errors.New("not implemented")},
+		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field."), false},
+		{"error fetching user", &nonExistentUserRequest, nil, errors.New("Error fetching user: no userDn found for: '" + nonExistentUserRequest.User + "'"), false},
+		{"locked out user", &lockedOutRequest, nil, errors.New("'locked@out.com' is locked out. Please contact an administrator to regain access."), false},
+		{"unknown location", &unknownLocationRequest, &unknownLocationResponse, nil, true},
+		{"bad response to question and unknown location", &wrongAnswerRequest, &wrongAnswerResponse, nil, true},
+		{"challenge token already exists", &alreadyExistsRequest, nil, errors.New("Challenge request has already been created"), false},
+		{"valid request", &validRequest, nil, errors.New("not implemented"), false},
 	}
 
 	//cleanup
@@ -178,7 +192,11 @@ func TestGenerateChallenge(t *testing.T) {
 	for _, tt := range tableTests {
 		t.Run(tt.name, func(t *testing.T) {
 			actualResponse, actualError := s.GenerateChallenge(ctx, tt.request)
-			AssertEqual(t, actualResponse, tt.expectedResponse)
+			if tt.stringifiedComparison {
+				AssertEqual(t, fmt.Sprint(actualResponse), fmt.Sprint(tt.expectedResponse))
+			} else {
+				AssertEqual(t, actualResponse, tt.expectedResponse)
+			}
 			AssertErrorEqual(t, actualError, tt.expectedError)
 		})
 	}

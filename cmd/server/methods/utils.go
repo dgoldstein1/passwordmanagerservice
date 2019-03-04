@@ -5,6 +5,7 @@ package methods
 import (
 	"strings"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
+	"math/rand"
 )
 
 // checks if string is in given array
@@ -28,4 +29,28 @@ func AnswerInAuthQuestions(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) 
 		}
 	}
 	return false
+}
+
+// gets a new random auth question
+func GetNewAuthQuestion(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) string {
+	currQuestion := ""
+	if request.UserQuestionResponse != nil {
+		currQuestion = request.UserQuestionResponse.Q
+	}
+	// case by length
+	if len(qs) == 0 {
+		return ""
+	}
+	if len(qs) == 1 {
+		return qs[0].Q
+	}
+	// create new temp array without current question
+	tempQs := []string{}
+	for _, q := range qs {
+		if currQuestion != q.Q {
+			tempQs = append(tempQs, q.Q)
+		}
+	}
+	// return random index 
+	return tempQs[rand.Intn(len(tempQs))]
 }
