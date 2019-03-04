@@ -12,6 +12,8 @@ import (
 	"os"
 	"github.com/spf13/viper"
 	"github.com/globalsign/mgo/bson"
+	"github.com/globalsign/mgo"
+	// "github.com/davecgh/go-spew/spew"
 )
 
 func TestGenerateChallenge(t *testing.T) {
@@ -75,10 +77,17 @@ func TestGenerateChallenge(t *testing.T) {
 	for _, tt := range tableTests {
 		t.Run(tt.name, func(t *testing.T) {
 			actualResponse, actualError := s.GenerateChallenge(ctx, tt.request)
-			AssertEqual(t, actualResponse, tt.expectedResponse, )
+			AssertEqual(t, actualResponse, tt.expectedResponse)
 			AssertErrorEqual(t, actualError, tt.expectedError)
 		})
 	}
+
+	// test error fecthing user
+	s.session = mgo.Session{}
+	t.Run("Could not get collection", func(t *testing.T) {
+		_, actualError := s.GenerateChallenge(ctx, &validRequest)
+		AssertErrorEqual(t, actualError, errors.New("Could not get collection: Bad mongo session"))
+	})
 }
 
 // adopted taken from https://gist.github.com/samalba/6059502

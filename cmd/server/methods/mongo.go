@@ -25,15 +25,15 @@ func ConnectToMongo(logger zerolog.Logger) (*mgo.Session, error) {
  * helper for copying mongo session for concurrency
  * @param {*mgo.Session}
  * @param {string collectionName}
- * @return {*mgo.Collection, *mgo.Session} for spaces
+ * @return {*mgo.Collection, *mgo.Session} for passwords
  **/
 func CopySessionAndGetCollection(sess *mgo.Session, collectionName string) (*mgo.Collection, *mgo.Session, error) {
-	if sess == nil {
-		return nil, nil, errors.New("nil mongo session")
+	if (sess == nil || sess.Mode() == 0 || sess.Ping() != nil) {
+		return nil, nil, errors.New("Bad mongo session")
 	}
 	sessCopy := sess.Copy()
-	spaces := sess.DB(viper.GetString("mongodb_name")).C(collectionName)
-	return spaces, sessCopy, nil
+	passwords := sess.DB(viper.GetString("mongodb_name")).C(collectionName)
+	return passwords, sessCopy, nil
 }
 
 /**
