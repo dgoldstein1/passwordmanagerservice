@@ -18,8 +18,12 @@ func CreateAndRegisterServer(
 	logger zerolog.Logger,
 	grpcServer *grpc.Server,
 ) {
-	session, _ := ConnectToMongo(logger)
-
+	// connect to mongo
+	session, err := ConnectToMongo(logger)
+	if err != nil {
+		panic(err)
+	}
+	
 	var server pb.PasswordserviceServer = &serverData{
 		logger : logger,
 		session : *session,
