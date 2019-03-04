@@ -7,6 +7,7 @@ import (
 
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/spf13/viper"
+
 )
 
 // get challenge token

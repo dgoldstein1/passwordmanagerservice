@@ -12,6 +12,7 @@ services:
       - "10000:10000"
       - "10001:10001"
     volumes:
+      - ./runner.conf:/go/src/github.com/dgoldstein1/passwordservice/runner.conf
       - ./docker/passwordservice/certs/:/opt/services/passwordservice/certs/
       - ./cmd:/go/src/github.com/dgoldstein1/passwordservice/cmd
       - ./docs/api:/opt/services/passwordservice/docs
