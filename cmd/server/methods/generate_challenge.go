@@ -4,7 +4,8 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/pkg/errors"
-
+	"time"
+	// "fmt"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/spf13/viper"
 )
@@ -34,21 +35,31 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	if locationIsNotKnown && invalidResponseToAnswer {
 		// increment unsuccessful logins
 		entry.Auth.FailedLogins = entry.Auth.FailedLogins + 1
-		if err := UpdateEntry(c, entry.Auth.Dn, entry); err != nil {
-			return nil, errors.Wrap(err, "Could not increment user")
-		}
 		// return new challenge question
 		return &pb.ChallengeResponse{
 			Error : "Login Unsuccessful",
 			UserQuestion : GetNewAuthQuestion(request, entry.Auth.AuthQuestions),
-		}, nil
+		}, UpdateEntry(c, entry.Auth.Dn, entry)
 	}
 	// answer already in db?
 	if entry.Auth.AccessToken != "" {
 		return nil, errors.New("Challenge request has already been created")
 	}
 	// generate challenge
+	challenge := "foo"
+	// solve challenge
+	accessToken := "bar"
 	// add login to list
-
-	return nil, errors.New("not implemented")
+	login := &pb.Login{
+		Location : request.Location,
+		Timestamp : int64(time.Now().Unix()),
+	}
+	entry.Logins = append(entry.Logins, login)
+	entry.Auth.AccessToken = accessToken
+	// return response
+	return &pb.ChallengeResponse{
+		Logins : entry.Logins,
+		Challenge : challenge,
+		User : entry.User,
+	}, UpdateEntry(c, entry.Auth.Dn, entry)
 }

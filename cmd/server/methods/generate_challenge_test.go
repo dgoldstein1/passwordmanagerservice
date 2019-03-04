@@ -46,6 +46,20 @@ func TestGenerateChallenge(t *testing.T) {
 		Passwords : "lskjdflskdjflskjdf",
 	}
 
+	validResponse := pb.ChallengeResponse{
+		User : validDBEntry.User,
+		Error : "",
+		Logins : []*pb.Login{
+			&pb.Login{
+				Location : &pb.Location{
+					Ip : "192.0.0.1",
+				},
+			},
+		},
+		Challenge : "foo",
+	}
+
+
 	nonExistentUserRequest := pb.ChallengeRequest{
 		User : "sdlkjf239jf-23jsdf",
 		Location : &pb.Location{
@@ -177,7 +191,6 @@ func TestGenerateChallenge(t *testing.T) {
 		{"unknown location", &unknownLocationRequest, &unknownLocationResponse, nil, true},
 		{"bad response to question and unknown location", &wrongAnswerRequest, &wrongAnswerResponse, nil, true},
 		{"challenge token already exists", &alreadyExistsRequest, nil, errors.New("Challenge request has already been created"), false},
-		{"valid request", &validRequest, nil, errors.New("not implemented"), false},
 	}
 
 	//cleanup
@@ -200,6 +213,19 @@ func TestGenerateChallenge(t *testing.T) {
 			AssertErrorEqual(t, actualError, tt.expectedError)
 		})
 	}
+
+	// test valid request all the way through
+	t.Run("valid request and response", func(t *testing.T) {
+		actualResponse, actualError := s.GenerateChallenge(ctx, &validRequest)
+		AssertErrorEqual(t, actualError, nil)
+		if actualResponse.Logins[0].Timestamp == 0 {
+			t.Errorf("expected timestamp to not be falsy but was %d", actualResponse.Logins[0].Timestamp)
+		}
+		// remove timestamp
+		actualResponse.Logins[0].Timestamp = 0
+		AssertEqual(t, fmt.Sprint(actualResponse), fmt.Sprint(&validResponse))
+	})
+
 
 	// test error fecthing user
 	s.session = mgo.Session{}
