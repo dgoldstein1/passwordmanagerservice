@@ -7,7 +7,6 @@ import (
 
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/spf13/viper"
-
 )
 
 // get challenge token
@@ -29,11 +28,15 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	if int(entry.Auth.FailedLogins) > viper.GetInt("max_failed_logins") {
 		return nil, errors.New("'" + request.User + "' is locked out. Please contact an administrator to regain access.")
 	}
-	// location is known || answer is in header?
+	// location is not known || valid answer to question?
+	locationIsNotKnown := StringInArray(request.Location.Ip, entry.Auth.KnownIps) == false
+	invalidResponseToAnswer := AnswerInAuthQuestions(request, entry.Auth.AuthQuestions) == false
+	if locationIsNotKnown && invalidResponseToAnswer {
+		return nil, errors.New("Unsuccessful login")
+	}
 	// answer already in db?
 	// generate challenge
 	// add login to list
 
-	
 	return nil, errors.New("not implemented")
 }

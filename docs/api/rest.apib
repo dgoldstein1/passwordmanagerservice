@@ -142,7 +142,10 @@ Generate a new challenge in order to make an authenticated request to a CRUD end
 + Request Retrieve New Challenge from New Location (application/json)
 
   {
-    "userQuestionResponse" : "Sharon Middle School",
+    "userQuestionResponse" : {
+      q : "what middle school did you go to?",
+      a : "Sharon Middle School"
+    },
     "location" : {
       "timestamp": 1541867160,
       "ip": "172.42.64.6",

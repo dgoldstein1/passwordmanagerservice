@@ -33,6 +33,13 @@ func TestGenerateChallenge(t *testing.T) {
 		Auth : &pb.Auth{
 			Dn : validRequest.User,
 			FailedLogins : 0,
+			AuthQuestions : []*pb.AuthQuestion{
+				&pb.AuthQuestion{
+					Q : "what is your favorite color?",
+					A : "yello",		
+				},
+			},
+			KnownIps : []string{"192.0.0.1"},
 		},
 		Logins : []*pb.Login{},
 		Passwords : "lskjdflskdjflskjdf",
@@ -63,6 +70,50 @@ func TestGenerateChallenge(t *testing.T) {
 		},
 	}
 
+	unknownLocationRequest := pb.ChallengeRequest{
+		User : "unkown@location.com",
+		Location : &pb.Location{
+			Ip : "192.0.0.2",
+		},
+	}
+	unknownLocation := pb.DBEntry{
+		Auth : &pb.Auth{
+			Dn : unknownLocationRequest.User,
+			FailedLogins : 0,
+			AuthQuestions : []*pb.AuthQuestion{
+				&pb.AuthQuestion{
+					Q : "what is your favorite color?",
+					A : "yello",		
+				},
+			},
+			KnownIps : []string{"192.0.0.1"},
+		},
+	}
+
+	wrongAnswerRequest := pb.ChallengeRequest{
+		User : "wrong@answer.com",
+		Location : &pb.Location{
+			Ip : "192.0.0.2",
+		},
+		UserQuestionResponse : &pb.AuthQuestion{
+			Q : "what is your favorite color?",
+			A : "yellow",
+		},
+	}
+	wrongAnswer := pb.DBEntry{
+		Auth : &pb.Auth{
+			Dn : wrongAnswerRequest.User,
+			FailedLogins : 0,
+			AuthQuestions : []*pb.AuthQuestion{
+				&pb.AuthQuestion{
+					Q : "what is your favorite color?",
+					A : "yello",		
+				},
+			},
+			KnownIps : []string{"192.0.0.1"},
+		},
+	}
+
 	// setup
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(5)
@@ -78,6 +129,8 @@ func TestGenerateChallenge(t *testing.T) {
 	c, sess, _ := CopySessionAndGetCollection(sess, "passwords")
 	c.Insert(validDBEntry)
 	c.Insert(lockedOutUser)
+	c.Insert(unknownLocation)
+	c.Insert(wrongAnswer)
 	// test table
 	var tableTests = []struct {
 		name string
@@ -89,6 +142,8 @@ func TestGenerateChallenge(t *testing.T) {
 		{"bad user generate challenge request", &pb.ChallengeRequest{}, nil, errors.New("Invalid request: 'user' is a required field.")},
 		{"error fetching user", &nonExistentUserRequest, nil, errors.New("Error fetching user: no userDn found for: '" + nonExistentUserRequest.User + "'")},
 		{"locked out user", &lockedOutRequest, nil, errors.New("'locked@out.com' is locked out. Please contact an administrator to regain access.")},
+		{"unknown location", &unknownLocationRequest, nil, errors.New("Unsuccessful login")},
+		{"bad response to question and unknown location", &wrongAnswerRequest, nil, errors.New("Unsuccessful login")},
 		{"valid request", &validRequest, nil, errors.New("not implemented")},
 	}
 
@@ -96,6 +151,8 @@ func TestGenerateChallenge(t *testing.T) {
 	defer func() {
 		c.RemoveAll(bson.M{"auth.dn": validDBEntry.Auth.Dn})
 		c.RemoveAll(bson.M{"auth.dn": lockedOutUser.Auth.Dn})
+		c.RemoveAll(bson.M{"auth.dn": unknownLocation.Auth.Dn})
+		c.RemoveAll(bson.M{"auth.dn": wrongAnswer.Auth.Dn})
 	}()
 
 	for _, tt := range tableTests {
