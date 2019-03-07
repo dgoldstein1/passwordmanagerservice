@@ -20,12 +20,12 @@ func StringInArray(a string, arr []string) bool {
 
 // checks if given answer is correct in database
 func AnswerInAuthQuestions(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) bool {
-	if request.UserQuestionResponse == nil {
+	if request.Body.UserQuestionResponse == nil {
 		return false
 	}
 	for _, q := range qs {
-		if strings.ToLower(q.Q) == strings.ToLower(request.UserQuestionResponse.Q) {
-			return strings.ToLower(q.A) == strings.ToLower(request.UserQuestionResponse.A)
+		if strings.ToLower(q.Q) == strings.ToLower(request.Body.UserQuestionResponse.Q) {
+			return strings.ToLower(q.A) == strings.ToLower(request.Body.UserQuestionResponse.A)
 		}
 	}
 	return false
@@ -34,8 +34,8 @@ func AnswerInAuthQuestions(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) 
 // gets a new random auth question
 func GetNewAuthQuestion(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) string {
 	currQuestion := ""
-	if request.UserQuestionResponse != nil {
-		currQuestion = request.UserQuestionResponse.Q
+	if request.Body.UserQuestionResponse != nil {
+		currQuestion = request.Body.UserQuestionResponse.Q
 	}
 	// case by length
 	if len(qs) == 0 {

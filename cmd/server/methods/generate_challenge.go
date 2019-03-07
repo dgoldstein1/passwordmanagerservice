@@ -14,7 +14,7 @@ import (
 // get challenge token
 func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
 
-	spew.Dump(request.Location)
+	spew.Dump(request.Body.Location)
 	// validate request
 	if err := ValidateChallengeRequest(request); err != nil {
 		return nil, errors.Wrap(err, "Invalid request")
@@ -33,7 +33,7 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 		return nil, errors.New("'" + request.User + "' is locked out. Please contact an administrator to regain access.")
 	}
 	// location is not known || valid answer to question?
-	locationIsNotKnown := StringInArray(request.Location.Ip, entry.Auth.KnownIps) == false
+	locationIsNotKnown := StringInArray(request.Body.Location.Ip, entry.Auth.KnownIps) == false
 	invalidResponseToAnswer := AnswerInAuthQuestions(request, entry.Auth.AuthQuestions) == false
 	if locationIsNotKnown && invalidResponseToAnswer {
 		// increment unsuccessful logins
@@ -54,7 +54,7 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	accessToken := "bar"
 	// add login to list
 	login := &pb.Login{
-		Location : request.Location,
+		Location : request.Body.Location,
 		Timestamp : int64(time.Now().Unix()),
 	}
 	entry.Logins = append(entry.Logins, login)
