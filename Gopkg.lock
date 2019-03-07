@@ -42,6 +42,14 @@
   version = "v2.0.0"
 
 [[projects]]
+  digest = "1:0deddd908b6b4b768cfc272c16ee61e7088a60f7fe2f06c547bd3d8e1f8b8e77"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = ""
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:c7f1a70752f1b995886aab151e364e74f6f141f140779ec0f25f520d3cf2f900"
   name = "github.com/deciphernow/gm-fabric-go"
   packages = [
@@ -135,11 +143,15 @@
     "jsonpb",
     "proto",
     "protoc-gen-go/descriptor",
+    "protoc-gen-go/generator",
+    "protoc-gen-go/generator/internal/remap",
+    "protoc-gen-go/plugin",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
     "ptypes/struct",
     "ptypes/timestamp",
+    "ptypes/wrappers",
   ]
   pruneopts = ""
   revision = "c823c79ea1570fb5ff454033735a8e68575d1d0f"
@@ -166,16 +178,16 @@
   revision = "cfaf5686ec79ff8344257723b6f5ba1ae0ffeb4d"
 
 [[projects]]
-  digest = "1:dc70bd0ecd18729cf0ecf8828045e185ce0b15084f1bbe250422ab65e6fcd79c"
+  digest = "1:c9fdd8237b24dff2fb49876f58a4db03cf20b0fa295e918258082a9075ec7786"
   name = "github.com/grpc-ecosystem/grpc-gateway"
   packages = [
+    "internal",
     "runtime",
-    "runtime/internal",
     "utilities",
   ]
   pruneopts = ""
-  revision = "aeab1d96e0f1368d243e2e5f526aa29d495517bb"
-  version = "v1.5.1"
+  revision = "5328886f9f5735cbc4f4819bf6b840a48609ad66"
+  version = "v1.8.2"
 
 [[projects]]
   digest = "1:c5466dfad4c14bf8e52a34b0eb98f1301acc1e304e0f0ff2c51c356ca1b86747"
@@ -307,7 +319,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:77fcea0d2af2dc0020fe673c4f83cd78765b97cd04bc001dcd8193f58eaf367c"
+  digest = "1:a29813277de981ce33148b3f1906bba492af2ce97237c050f62a6b48cfdae721"
   name = "github.com/prometheus/procfs"
   packages = [
     ".",
@@ -317,7 +329,7 @@
     "xfs",
   ]
   pruneopts = ""
-  revision = "bbced9601137e764853b2fad7ec3e2dc4c504e02"
+  revision = "d0f344d83b0c80a1bc03b547a2374a9ec6711144"
 
 [[projects]]
   digest = "1:a9ac823421527eaf6566301956cc5ae6dc312f4c0746afc0aa2f23b96f6458bd"
@@ -350,7 +362,7 @@
   revision = "c4fab1ac1bec58281ad0667dc3f0907a9476ac47"
 
 [[projects]]
-  digest = "1:066c1020d667e25a0614b56aee1f9ac47e75c77de98eddfb51e9be02c68c1577"
+  digest = "1:d77a85cf43b70ae61fa2543d402d782b40dca0f5f41413839b5f916782b0fab9"
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -358,8 +370,8 @@
     "mem",
   ]
   pruneopts = ""
-  revision = "071446942108a03a13cf0717275ad3bdbcb691b4"
-  version = "v2.19.01"
+  revision = "6c6abd6d1666d6b27f1c261e0f850441ba22aa3a"
+  version = "v2.19.02"
 
 [[projects]]
   digest = "1:d9f371ceb44045ca4405b65fed916e4b45396340b9e8674851c3d652f6351cde"
@@ -381,12 +393,12 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:9ceffa4ab5f7195ecf18b3a7fff90c837a9ed5e22e66d18069e4bccfe1f52aa0"
+  digest = "1:cc15ae4fbdb02ce31f3392361a70ac041f4f02e0485de8ffac92bd8033e3d26e"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
   pruneopts = ""
-  revision = "4a4406e478ca629068e7768fc33f3f044173c0a6"
-  version = "v1.0.0"
+  revision = "94f6ae3ed3bceceafa716478c5fbf8d29ca601a1"
+  version = "v1.1.0"
 
 [[projects]]
   digest = "1:cbaf13cdbfef0e4734ed8a7504f57fe893d471d62a35b982bf6fb3f036449a66"
@@ -426,7 +438,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2b08539d056d6b2da4233648f5014d84cb70a9c278523374c75776a75a32d03e"
+  digest = "1:7489cf41e267d966cbc16d9b98622e7124818af9339d5466aaec4fc736c404c0"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -439,7 +451,7 @@
     "trace",
   ]
   pruneopts = ""
-  revision = "92fc7df08ae7536330f5a21328292abfa70520a8"
+  revision = "16b79f2e4e95ea23b2bf9903c9809ff7b013ce85"
 
 [[projects]]
   branch = "master"
@@ -454,14 +466,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:74ce8329385730bb2d01e4e91b66183beceeb1512084e4253653ac2439f1ef8c"
+  digest = "1:acd61a173af5a8fc666328598f3aed921b0947ff2da2eeb548f7ba77e9a0cbd0"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = ""
-  revision = "a34e9553db1e492c9a76e60db2296ae7e5fbb772"
+  revision = "b294cbcfc56d2a65a30c02c78722b5df061e99b8"
 
 [[projects]]
   digest = "1:5acd3512b047305d49e8763eef7ba423901e85d5dd2fd1e71778a0ea8de10bd4"
@@ -504,14 +516,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:bedc60c52eb064eca6d7ce3321602522c5f50b6635aa7bc93c5624f1e65f9eda"
+  digest = "1:4ade19a0f34739fa22227cd9d2018e0dd7c119171c93d76434421e54d54792b6"
   name = "google.golang.org/genproto"
   packages = [
     "googleapis/api/annotations",
     "googleapis/rpc/status",
+    "protobuf/field_mask",
   ]
   pruneopts = ""
-  revision = "4f5b463f9597cbe0dd13a6a2cd4f85e788d27508"
+  revision = "6e86cb5d2f12401bdd82a5eccbd701b5a697e63e"
 
 [[projects]]
   digest = "1:b6c17b0c657f047118ae59b358950b28515914512cf3de02388cc42e33a92520"
@@ -578,6 +591,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/armon/go-metrics",
+    "github.com/davecgh/go-spew/spew",
     "github.com/deciphernow/gm-fabric-go/gk",
     "github.com/deciphernow/gm-fabric-go/httputil",
     "github.com/deciphernow/gm-fabric-go/impersonation",

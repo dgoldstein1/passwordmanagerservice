@@ -6,12 +6,15 @@ import (
 	"github.com/pkg/errors"
 	"time"
 	// "fmt"
+	"github.com/davecgh/go-spew/spew"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/spf13/viper"
 )
 
 // get challenge token
 func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
+
+	spew.Dump(request.Location)
 	// validate request
 	if err := ValidateChallengeRequest(request); err != nil {
 		return nil, errors.Wrap(err, "Invalid request")
