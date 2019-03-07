@@ -13,11 +13,11 @@ import (
 
 // get challenge token
 func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
+	s.logger.Debug().Msg(spew.Sdump(request)) 
 	// validate request
 	if err := ValidateChallengeRequest(request); err != nil {
 		return nil, errors.Wrap(err, "Invalid request")
 	}
-	spew.Dump(request.Body.Location)
 	// is user in db?
 	c, _, err := CopySessionAndGetCollection(&s.session, "passwords")
 	if err != nil {

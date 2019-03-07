@@ -19,8 +19,10 @@ describe("post/challenge", () => {
             }
         };
 
-        let endpoint = testEndpoint.default + postchallengePositiveTest.path;
+        let endpoint = testEndpoint.default + postchallengePositiveTest.path + "?user=david@gmail.com";
         let body = postchallengePositiveTest.requestBody || {};
+        body = {}
+        console.log(body)
         let command =
             "./src/cli/make_request.sh " +
             endpoint +
