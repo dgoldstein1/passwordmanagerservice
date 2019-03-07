@@ -39,23 +39,29 @@ func TestAnswerInAuthQuestions(t *testing.T) {
 	}
 
 	validRequest := &pb.ChallengeRequest{
-		UserQuestionResponse : &pb.AuthQuestion{
-			Q : firstQ,
-			A : "pickles",
+		Body : &pb.ChallengeRequestBody{
+			UserQuestionResponse : &pb.AuthQuestion{
+				Q : firstQ,
+				A : "pickles",
+			},
 		},
 	}
 
 	wrongAnswer := &pb.ChallengeRequest{
-		UserQuestionResponse : &pb.AuthQuestion{
-			Q : firstQ,
-			A : "bananas",
+		Body : &pb.ChallengeRequestBody{
+			UserQuestionResponse : &pb.AuthQuestion{
+				Q : firstQ,
+				A : "bananas",
+			},
 		},
 	}
 
 	wrongQuestion := &pb.ChallengeRequest{
-		UserQuestionResponse : &pb.AuthQuestion{
-			Q : "what is my mother's name?",
-			A : "pickles",
+		Body : &pb.ChallengeRequestBody{
+			UserQuestionResponse : &pb.AuthQuestion{
+				Q : "what is my mother's name?",
+				A : "pickles",
+			},
 		},
 	}
 
@@ -105,9 +111,11 @@ func TestGetNewAuthQuestion(t *testing.T) {
 	}
 
 	validRequest := &pb.ChallengeRequest{
-		UserQuestionResponse : &pb.AuthQuestion{
-			Q : firstQ,
-			A : "pickles",
+		Body : &pb.ChallengeRequestBody{
+			UserQuestionResponse : &pb.AuthQuestion{
+				Q : firstQ,
+				A : "pickles",
+			},
 		},
 	}
 

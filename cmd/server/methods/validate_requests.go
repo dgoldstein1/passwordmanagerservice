@@ -13,7 +13,7 @@ func ValidateChallengeRequest(request *pb.ChallengeRequest) error {
 		return errors.New("'user' is a required field.")
 	}
 	// must have 'Location'
-	if request.Body.Location == nil {
+	if (request.Body == nil || request.Body.Location == nil) {
 		return errors.New("'location' is a required field.")
 	}
 	// must have 'Location.Ip'

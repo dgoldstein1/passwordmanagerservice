@@ -21,11 +21,13 @@ func TestGenerateChallenge(t *testing.T) {
 	// data used in tests
 	validRequest := pb.ChallengeRequest{
 		User : "davd@david.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.1",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",			
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.1",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",			
+			},
 		},
 	}
 	validDBEntry := pb.DBEntry{
@@ -68,21 +70,25 @@ func TestGenerateChallenge(t *testing.T) {
 
 	nonExistentUserRequest := pb.ChallengeRequest{
 		User : "sdlkjf239jf-23jsdf",
-		Location : &pb.Location{
-			Ip : "192.0.0.1",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",	
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.1",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",	
+			},
 		},
 	}
 
 	lockedOutRequest := pb.ChallengeRequest{
 		User : "locked@out.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.1",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",	
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.1",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",	
+			},
 		},
 	}
 	lockedOutUser := pb.DBEntry{
@@ -99,11 +105,13 @@ func TestGenerateChallenge(t *testing.T) {
 
 	unknownLocationRequest := pb.ChallengeRequest{
 		User : "unkown@location.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.2",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",	
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.2",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",	
+			},
 		},
 	}
 
@@ -128,15 +136,17 @@ func TestGenerateChallenge(t *testing.T) {
 
 	wrongAnswerRequest := pb.ChallengeRequest{
 		User : "wrong@answer.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.2",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",	
-		},
-		UserQuestionResponse : &pb.AuthQuestion{
-			Q : "what is your favorite color?",
-			A : "yellow",
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.2",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",	
+			},
+			UserQuestionResponse : &pb.AuthQuestion{
+				Q : "what is your favorite color?",
+				A : "yellow",
+			},
 		},
 	}
 
@@ -161,11 +171,13 @@ func TestGenerateChallenge(t *testing.T) {
 
 	alreadyExistsRequest := pb.ChallengeRequest{
 		User : "already@exists.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.1",
-			Latitude : 25,
-			Longitude : 25,
-			CountryCode : "RU",	
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.1",
+				Latitude : 25,
+				Longitude : 25,
+				CountryCode : "RU",	
+			},
 		},
 	}
 	alreadyExistsEntry := pb.DBEntry{

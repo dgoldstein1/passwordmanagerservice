@@ -19,8 +19,10 @@ func TestValidateChallengeRequest(t *testing.T) {
 	// must pass location.ip
 	requestWithoutIp := pb.ChallengeRequest{
 		User : "davd@david.com",
-		Location : &pb.Location{
-			Ip : "",
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "",
+			},
 		},
 	}
 	err = ValidateChallengeRequest(&requestWithoutIp)
@@ -29,7 +31,9 @@ func TestValidateChallengeRequest(t *testing.T) {
 	}
 	// must pass user
 	requestWithoutUser := pb.ChallengeRequest{
-		Location : &pb.Location{},
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{},
+		},
 	}
 	err = ValidateChallengeRequest(&requestWithoutUser)
 	if (err == nil || err.Error() != "'user' is a required field.") {
@@ -38,8 +42,10 @@ func TestValidateChallengeRequest(t *testing.T) {
 
 	err = ValidateChallengeRequest(&pb.ChallengeRequest{
 		User : "davd@david.com",
-		Location : &pb.Location{
-			Ip : "192.0.0.1",
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "192.0.0.1",
+			},
 		},
 	})
 	if (err == nil || err.Error() != "'location.latitude and location.longitude are required fields") {
@@ -47,9 +53,11 @@ func TestValidateChallengeRequest(t *testing.T) {
 	}
 	err = ValidateChallengeRequest(&pb.ChallengeRequest{
 		User : "davd@david.com",
-		Location : &pb.Location{
-			Ip : "128.3.5.1",
-			Latitude : 25249.24,
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "128.3.5.1",
+				Latitude : 25249.24,
+			},
 		},
 	})
 	if (err == nil || err.Error() != "'location.latitude and location.longitude are required fields") {
@@ -57,10 +65,12 @@ func TestValidateChallengeRequest(t *testing.T) {
 	}
 	err = ValidateChallengeRequest(&pb.ChallengeRequest{
 		User : "davd@david.com",
-		Location : &pb.Location{
-			Ip : "128.3.5.1",
-			Latitude : 25249.24,
-			Longitude : -252.36,
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "128.3.5.1",
+				Latitude : 25249.24,
+				Longitude : -252.36,
+			},
 		},
 	})
 	if (err == nil || err.Error() != "'location.countryCode' is a required field.") {
@@ -69,11 +79,13 @@ func TestValidateChallengeRequest(t *testing.T) {
 
 	err = ValidateChallengeRequest(&pb.ChallengeRequest{
 		User : "david@david.com",
-		Location : &pb.Location{
-			Ip : "128.3.5.1",
-			Latitude : 25249.24,
-			Longitude : -252.36,
-			CountryCode : "RU",
+		Body : &pb.ChallengeRequestBody{
+			Location : &pb.Location{
+				Ip : "128.3.5.1",
+				Latitude : 25249.24,
+				Longitude : -252.36,
+				CountryCode : "RU",
+			},
 		},
 	})
 	if (err != nil) {

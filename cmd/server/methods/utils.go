@@ -34,7 +34,7 @@ func AnswerInAuthQuestions(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) 
 // gets a new random auth question
 func GetNewAuthQuestion(request *pb.ChallengeRequest, qs []*pb.AuthQuestion) string {
 	currQuestion := ""
-	if request.Body.UserQuestionResponse != nil {
+	if request.Body != nil && request.Body.UserQuestionResponse != nil {
 		currQuestion = request.Body.UserQuestionResponse.Q
 	}
 	// case by length
