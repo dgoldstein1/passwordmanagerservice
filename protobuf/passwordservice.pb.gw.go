@@ -63,12 +63,20 @@ func request_Passwordservice_UpdatePasswords_0(ctx context.Context, marshaler ru
 }
 
 var (
-	filter_Passwordservice_GenerateChallenge_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_Passwordservice_GenerateChallenge_0 = &utilities.DoubleArray{Encoding: map[string]int{"body": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
 )
 
 func request_Passwordservice_GenerateChallenge_0(ctx context.Context, marshaler runtime.Marshaler, client PasswordserviceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ChallengeRequest
 	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.Body); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Passwordservice_GenerateChallenge_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)

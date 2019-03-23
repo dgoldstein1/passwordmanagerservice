@@ -32,12 +32,11 @@ The Password service keeps track of three kinds of information
 | Attribute | Meaning           | Type |
 |:-------|----------------------|---------|
 | `dn`  | User ID           |   string      |
-| `authPassword`  | Shared client <-> server secret             |     string    |
+| `authpassword`  | Shared client <-> server secret             |     string    |
 | `accessToken`  | Challenge / Response answer (temporary)          |     string    |
 | `authQuestions`  | Plain text questions and answer from user to authenticate  if not in list of known IPs       |    list[string]     |
-| `locked`  | is this account locked?        |    bool     |
 | `failedLogins`  | Number of times the user has failed to log in, reset on every successful login        |    number     |
-| `knownIPs`  | pre-aggregated list of IPs user has logged in from        |    list[string]     |
+| `knownIps`  | pre-aggregated list of IPs user has logged in from        |    list[string]     |
 
 
 *Logins*
@@ -61,10 +60,9 @@ List of geolocated logins. See [ip stack API](https://ipstack.com/documentation)
     "email": "david@david.com"
   },
   "auth": {
-    "dn": "cn=david dgoldstein,ou=people,ou=passworkd org,c=us",
-    "authPassword": "poiw83vliuaywelfiauwheflkajsdhdrvl938lwu3iohf",
+    "dn": "david@david.com",
+    "authpassword": "poiw83vliuaywelfiauwheflkajsdhdrvl938lwu3iohf",
     "accessToken": "ls39vnlw9nv83vlr2vl3h2l3rjvsljvhrn-239n-r19na-n2n1v8",
-    "locked" : false,
     "failedLogins" : 0,
     "authQuestions": [
       {
@@ -72,14 +70,13 @@ List of geolocated logins. See [ip stack API](https://ipstack.com/documentation)
         "a": "penny"
       }
     ],
-    "knownIPs": [
+    "knownIps": [
       "172.42.64.6"
     ]
   },
   "logins": [
     {
       "timestamp": 1541867160,
-      "ip": "172.42.64.6",
       "location": {
         "ip": "172.42.64.6",
         "type": "ipv4",

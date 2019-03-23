@@ -6,7 +6,7 @@ let params = {};
 let path = "/passwords" + api.paramsToUri(params);
 let requestBody = {};
 let method = "POST";
-let expectedOutput = {"code": 2, "error": "not implemented", "message": "not implemented"};
+let expectedOutput = { passwords: "XyiiljZ" };
 // method run during testing
 let postpasswordsPositiveTest = function() {
     return api[method.toLowerCase()](endpoint + path, requestBody);

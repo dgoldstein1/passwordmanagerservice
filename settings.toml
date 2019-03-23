@@ -42,7 +42,7 @@
     statsd_mem_interval = "1m"
 
 # prometheus
-    report_prometheus = false
+    report_prometheus = true
 
 # ACL filter
     use_acl = false
@@ -57,5 +57,8 @@
 # mongodb
     mongodb_endpoint="mongodb://mongodb:27017"
     mongodb_name="passwords"
+
+# db
+    max_failed_logins=3
 
 

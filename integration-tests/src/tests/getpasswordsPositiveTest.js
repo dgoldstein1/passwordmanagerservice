@@ -6,8 +6,7 @@ let params = {};
 let path = "/passwords" + api.paramsToUri(params);
 let requestBody = {};
 let method = "GET";
-let expectedOutput = {"code": 2, "error": "not implemented", "message": "not implemented"}
-;
+let expectedOutput = { passwords: "IF" };
 // method run during testing
 let getpasswordsPositiveTest = function() {
     return api[method.toLowerCase()](endpoint + path, requestBody);

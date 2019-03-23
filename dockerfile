@@ -26,7 +26,7 @@ RUN go get github.com/golang/dep/cmd/dep
 WORKDIR $PRJ_DIR
 
 # install dependencies
-RUN dep ensure
+RUN dep ensure -v
 
 # configure entrypoint
 COPY ./settings.toml /etc/passwordservice/settings.toml
