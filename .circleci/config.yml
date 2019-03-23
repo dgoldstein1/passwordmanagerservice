@@ -169,10 +169,10 @@ workflows:
       - unit-tests:
           requires:
             - build
-      - integration-tests:
-          requires:
-            - build
-      - create-documentation:
+      # - integration-tests:
+      #     requires:
+      #       - build
+      # - create-documentation:
           requires:
             - build
 
@@ -181,7 +181,7 @@ workflows:
           requires:
             - create-documentation
             - unit-tests
-            - integration-tests
+            # - integration-tests
           filters:
             branches:
               only: master
@@ -190,7 +190,7 @@ workflows:
           requires:
             - create-documentation
             - unit-tests
-            - integration-tests
+            # - integration-tests
           filters:
             branches:
               only: master
@@ -199,7 +199,7 @@ workflows:
           requires:
             - create-documentation
             - unit-tests
-            - integration-tests
+            # - integration-tests
           filters:
             branches:
               only: master
