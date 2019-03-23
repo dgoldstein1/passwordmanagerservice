@@ -5,15 +5,13 @@ import (
 
 	"github.com/pkg/errors"
 	"time"
-	// "fmt"
-	"github.com/davecgh/go-spew/spew"
+	"fmt"
 	pb "github.com/dgoldstein1/passwordservice/protobuf"
 	"github.com/spf13/viper"
 )
 
 // get challenge token
 func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.ChallengeRequest) (*pb.ChallengeResponse, error) {
-	s.logger.Debug().Msg(spew.Sdump(request)) 
 	// validate request
 	if err := ValidateChallengeRequest(request); err != nil {
 		return nil, errors.Wrap(err, "Invalid request")
@@ -34,7 +32,9 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	// location is not known || valid answer to question?
 	locationIsNotKnown := StringInArray(request.Body.Location.Ip, entry.Auth.KnownIps) == false
 	invalidResponseToAnswer := AnswerInAuthQuestions(request, entry.Auth.AuthQuestions) == false
+	
 	if locationIsNotKnown && invalidResponseToAnswer {
+		s.logger.Debug().Msg(fmt.Sprintf("User %s, location is not known %t, invalidResponseToAnswer %t", request.User, locationIsNotKnown, invalidResponseToAnswer))
 		// increment unsuccessful logins
 		entry.Auth.FailedLogins = entry.Auth.FailedLogins + 1
 		// return new challenge question
@@ -50,14 +50,14 @@ func (s *serverData) GenerateChallenge(ctx context.Context, request *pb.Challeng
 	// generate challenge
 	challenge := "foo"
 	// solve challenge
-	accessToken := "bar"
+	AccessToken := "bar"
 	// add login to list
 	login := &pb.Login{
 		Location : request.Body.Location,
 		Timestamp : int64(time.Now().Unix()),
 	}
 	entry.Logins = append(entry.Logins, login)
-	entry.Auth.AccessToken = accessToken
+	entry.Auth.AccessToken = AccessToken
 	// return response
 	return &pb.ChallengeResponse{
 		Logins : entry.Logins,

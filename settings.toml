@@ -59,6 +59,6 @@
     mongodb_name="passwords"
 
 # db
-    max_failed_logins=5
+    max_failed_logins=3
 
 

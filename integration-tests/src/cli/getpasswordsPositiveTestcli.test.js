@@ -2,7 +2,7 @@ const testEndpoint = require("../definitions/cliEndpoint");
 const getpasswordsPositiveTest = require("../tests/getpasswordsPositiveTest");
 var exec = require("child_process").exec;
 
-describe("get/passwords", () => {
+describe.skip("get/passwords", () => {
     test("PositiveTest", done => {
         let callback = (err, stdOut, stdError) => {
             try {

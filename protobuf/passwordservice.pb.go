@@ -138,7 +138,7 @@ func (m *User) GetEmail() string {
 // authentication info for server
 type Auth struct {
 	Dn                   string          `protobuf:"bytes,1,opt,name=dn,proto3" json:"dn,omitempty"`
-	AuthPassword         string          `protobuf:"bytes,2,opt,name=authPassword,proto3" json:"authPassword,omitempty"`
+	authpassword         string          `protobuf:"bytes,2,opt,name=authpassword,proto3" json:"authpassword,omitempty"`
 	AccessToken          string          `protobuf:"bytes,3,opt,name=accessToken,proto3" json:"accessToken,omitempty"`
 	FailedLogins         int32           `protobuf:"varint,4,opt,name=failedLogins,proto3" json:"failedLogins,omitempty"`
 	AuthQuestions        []*AuthQuestion `protobuf:"bytes,5,rep,name=authQuestions,proto3" json:"authQuestions,omitempty"`
@@ -179,9 +179,9 @@ func (m *Auth) GetDn() string {
 	return ""
 }
 
-func (m *Auth) GetAuthPassword() string {
+func (m *Auth) Getauthpassword() string {
 	if m != nil {
-		return m.AuthPassword
+		return m.authpassword
 	}
 	return ""
 }

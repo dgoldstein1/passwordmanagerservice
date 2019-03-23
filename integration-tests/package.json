@@ -7,7 +7,7 @@
     "@material-ui/icons": "^2.0.3",
     "axios": "^0.18.0",
     "axios-mock-adapter": "^1.15.0",
-    "cross-env": "^5.2.0",
+    "mongodb": "^3.1.13",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-scripts": "1.1.5",
@@ -17,7 +17,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "testCI": "cross-env CI=true react-scripts test --env=jsdom",
+    "testCI": "npm run test -- --coverage --coveragePathIgnorePatterns='src/registerServiceWorker.js' --bail --ci",
     "eject": "react-scripts eject",
     "pretty": "prettier --write --tab-width 4 \"**/*.js\""
   },
