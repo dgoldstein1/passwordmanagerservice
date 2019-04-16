@@ -172,7 +172,7 @@ workflows:
       # - integration-tests:
       #     requires:
       #       - build
-      # - create-documentation:
+      - create-documentation:
           requires:
             - build
 
